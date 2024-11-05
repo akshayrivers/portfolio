@@ -1,0 +1,44 @@
+/* App.css */
+
+/* Define the fade-in animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.card img:hover {
+  opacity: 1; /* Or adjust opacity as needed */
+  transition: opacity 0.2s ease;
+}
+
+.thread {
+  position: absolute; /* Positioning it absolutely */
+  left: 50%; /* Center it horizontally */
+  top: 0; /* Start at the top of the section */
+  width: 2px; /* Width of the line */
+  height: calc(100vh - 50px); /* Calculate height dynamically */
+  background-color: rgba(255, 255, 255, 0.5); /* Color of the line */
+  z-index: -1; /* Behind the content */
+  transition: height 0.3s; /* Smooth transition */
+}
+
+.section {
+  position: relative; /* Needed for the thread to be positioned correctly */
+  padding: 50px; /* Give some padding */
+}
