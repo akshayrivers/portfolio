@@ -21,24 +21,111 @@
   transform: translateY(-2px);
   transition: transform 0.2s ease;
 }
+.footer {
+  margin-bottom: 0; /* Ensure there's no margin */
+  padding-bottom: 0; /* Ensure there's no padding */
+}
 
 .card img:hover {
   opacity: 1; /* Or adjust opacity as needed */
   transition: opacity 0.2s ease;
 }
-
-.thread {
-  position: absolute; /* Positioning it absolutely */
-  left: 50%; /* Center it horizontally */
-  top: 0; /* Start at the top of the section */
-  width: 2px; /* Width of the line */
-  height: calc(100vh - 50px); /* Calculate height dynamically */
-  background-color: rgba(255, 255, 255, 0.5); /* Color of the line */
-  z-index: -1; /* Behind the content */
-  transition: height 0.3s; /* Smooth transition */
+/* App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
 }
 
-.section {
-  position: relative; /* Needed for the thread to be positioned correctly */
-  padding: 50px; /* Give some padding */
+html, body {
+  height: 100%;
+  background-color: #1a1a1a; /* Ensure your desired background color */
 }
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-in-out forwards;
+}
+/* Custom Styles */
+:root {
+  --background: #060608;
+  --color: #FAFAFA;
+}
+
+body {
+  background: var(--background);
+}
+
+.container {
+  color: var(--color);
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.stack {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.stack span {
+  font-weight: bold;
+  font-size: 4rem;
+  position: relative;
+  animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards, glitch 2s ease infinite 2s alternate-reverse;
+}
+
+.stack span:nth-child(odd) {
+  --glitch-translate: 8px;
+}
+
+.stack span:nth-child(even) {
+  --glitch-translate: -8px;
+}
+
+@keyframes stack {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
+    text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+  }
+  60% {
+    opacity: 0.5;
+    transform: translateX(50%);
+  }
+  80% {
+    transform: none;
+    opacity: 1;
+    text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+    transform: translate(var(--glitch-translate));
+  }
+  2% {
+    text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+  }
+  4%, 100% {
+    text-shadow: none;
+    transform: none;
+  }
+}
+
+
+
