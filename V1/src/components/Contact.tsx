@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaLinkedin, FaGithub, FaTwitter, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
+import  { useState } from 'react';
+import { FaLinkedin, FaGithub, FaTwitter, FaEnvelope } from 'react-icons/fa';
 
 const Contact = () => {
   // State to manage visibility of contact information
