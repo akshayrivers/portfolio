@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
-import profilepic1 from '../WhatsApp Image 2024-11-06 at 19.52.36.jpeg';
-import profilepic2 from '../WhatsApp Image 2024-11-06 at 19.52.37.jpeg';
+// import profilepic1 from '../WhatsApp Image 2024-11-06 at 19.52.36.jpeg';
+// import profilepic2 from '../WhatsApp Image 2024-11-06 at 19.52.37.jpeg';
 import profilepic3 from '../WhatsApp Image 2024-11-06 at 19.52.39.jpeg';
 import { twMerge } from 'tailwind-merge';
 

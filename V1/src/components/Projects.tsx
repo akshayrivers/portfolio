@@ -1,6 +1,6 @@
 import React from 'react';
 import BDashboard from "./BDashboard";
-import image from '../nico-evard-M7JZ5h4hF5w-unsplash.jpg';
+// import image from '../nico-evard-M7JZ5h4hF5w-unsplash.jpg';
 import http from '../http.jpg';
 import play from '../plau.jpg';
 import wallet from '../wallet1.jpg';

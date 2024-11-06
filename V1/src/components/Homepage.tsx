@@ -44,8 +44,8 @@ const HomePage: React.FC = () => {
             {/* Glitch Effect for Name */}
             <div className="relative inline-block">
               <h1 className="text-5xl font-serif font-extrabold leading-tight  ">
-                <div className="stack " style={{ '--stacks': 1 }}>
-                  <span className="bg-gradient-to-r from-red-800 to-amber-900 bg-clip-text text-transparent"style={{ '--index': 0 }}>Vinod Akshat</span>
+                <div className="stack " >
+                  <span className="bg-gradient-to-r from-red-800 to-amber-900 bg-clip-text text-transparent">Vinod Akshat</span>
                 </div>
               </h1>
             </div>
