@@ -100,7 +100,7 @@ export default function Home() {
         </div>
 
 
-        <div className="fixed bottom-8 left-6 sm: left-1 z-50">
+        <div className="fixed bottom-8  sm: left-1 z-50">
   <a
     href="/RESUME_VINOD_AKSHAT.pdf"
     download

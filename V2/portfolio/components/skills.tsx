@@ -4,9 +4,9 @@ const Skills = () => {
       {/* Skills & Experience Section */}
       <div className="mt-10">
 
-      <h2 className="text-5xl custom-font text-amber-500 mb-8">Skills</h2>
+      <h2 className="text-5xl custom-font text-amber-500 mb-8 text-center ">Skills</h2>
 
-        <div className="space-y-4 text-gray-300 text-lg">
+        <div className="space-y-4 text-gray-300 text-lg items-center text-center">
           <p><span className="text-amber-400 font-semibold">Languages:</span> C, C++, Java, Rust, Python, JavaScript, TypeScript, React, HTML5, CSS3</p>
           <p><span className="text-amber-400 font-semibold">Frameworks:</span> Next.js, Node.js, Express.js, Tailwind</p>
           <p><span className="text-amber-400 font-semibold">Developer Tools:</span> Git, VS Code, Bash, Vercel, Render, Neovim</p>
@@ -16,9 +16,9 @@ const Skills = () => {
 
 
         {/* Experience Section */}
-        <h2 className="text-5xl custom-font text-amber-500 mb-8 mt-10">Experience</h2>
+        <h2 className="text-5xl custom-font text-amber-500 mb-8 mt-1 text-center">Experience</h2>
 
-        <div className="space-y-6">
+        <div className="space-y-6 items-center text-center">
           {/* Mined Hackathon */}
           <div className="bg-gray-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg border border-gray-700">
             <h4 className="text-2xl text-amber-400 font-semibold">🏆 Mined Hackathon (2025)</h4>
