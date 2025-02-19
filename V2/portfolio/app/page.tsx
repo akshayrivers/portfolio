@@ -11,6 +11,9 @@ import { useState } from "react";
 import { CgDarkMode } from "react-icons/cg";
 import { MdDarkMode, MdOutlineDarkMode } from "react-icons/md";
 import Project from "@/components/project";
+import { FcDocument } from "react-icons/fc";
+import { RxResume } from "react-icons/rx";
+import { GrDocumentDownload, GrDocumentPdf, GrDocumentTxt, GrDocumentUser, GrResume } from "react-icons/gr";
 export default function Home() {
   const[Back,setBack]=useState('pf1.jpeg')
   const changeBack = () => {
@@ -96,16 +99,21 @@ export default function Home() {
           </div>
         </div>
 
+
+        <div className="fixed bottom-8 left-6 sm: left-1 z-50">
+  <a
+    href="/RESUME_VINOD_AKSHAT.pdf"
+    download
+    className="flex items-center gap-2 text-white  px-4 py-2 rounded-lg font-bold shadow-md md:px-5 md:py-3"
+  >
+    <GrDocumentPdf className="w-8 h-8" />
+    <span className="hidden sm:block">Resume</span>
+  </a>
+</div>
+
       
-        <div className="fixed bottom-6 right-6 transform -translate-x-1/2 z-50 flex justify-center">
-          <a
-            href="/RESUME_VINOD_AKSHAT.pdf"
-            download
-            className="bg-green-700 hover:bg-green-600 text-black px-4 py-2 rounded-lg font-bold shadow-md"
-          >
-            Resume
-          </a>
-        </div>
+        
+
 
       
       <div className="flex gap-4 mt-6 p-4 text-4xl justify-center">

@@ -8,7 +8,7 @@ const About = () => {
       <Navbar color="orange" />
 
       {/* Title */}
-      <h1 className="custom-font text-9xl text-amber-500 mb-8">About Me</h1>
+      <h1 className="custom-font text-9xl text-amber-500 mb-8 text-center mt-6">About Me</h1>
 
       {/* About Section */}
       <p className="text-xl sigmar-regular text-gray-50 mb-4">
