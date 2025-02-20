@@ -43,36 +43,36 @@ const projects: any = [
     title: "Spotify to YouTube Playlist Migration Tool",
     description:
       "Automated playlist migration between Spotify and YouTube using OAuth 2.0 for secure authentication. Utilized Spotify and YouTube APIs to synchronize playlist data for up to 1000 tracks. Encountered deployment challenges due to OAuth 2.0 requiring a verified (paid) domain; exploring alternative solutions.",
-    GithubLink: "https://github.com/akshayrivers/Spotify-to-YouTube",
+    GithubLink: "https://github.com/akshayrivers/Playlist-Migration",
     LiveLink: "",
   },
   {
     title: "Custom Shell",
     description:
       "Built a custom shell in Rust supporting built-in commands (cd, pwd, echo, exit) and execution of external commands. Developed a 'type' command to differentiate between built-in and external commands. Incorporated robust error handling and streamlined input parsing.",
-    GithubLink: "https://github.com/akshayrivers/Custom-Shell",
+    GithubLink: "https://github.com/akshayrivers/Shell",
     LiveLink: "",
   },
   {
     title: "Custom HTTP Server",
     description:
       "Developed an HTTP 1.1 server in Java to handle client requests, including GET, POST, PUT, and DELETE methods. Implemented route-based handling for dynamic functionality. Included detailed error responses (e.g., 404, 405) to enhance client feedback.",
-    GithubLink: "https://github.com/akshayrivers/Custom-HTTP-Server",
+    GithubLink: "https://github.com/akshayrivers/http-server",
     LiveLink: "",
   },
   {
     title: "Next.js Boilerplate",
     description:
       "Designed a Next.js boilerplate with next-auth, AI integration, and OTP verification. Included Dashboard, SignIn, and SignUp pages, with a backend utilizing MongoDB aggregation pipelines.",
-    GithubLink: "https://github.com/akshayrivers/Nextjs-Boilerplate",
+    GithubLink: "https://github.com/akshayrivers/BoilerPlateNextjs",
     LiveLink: "",
   },
   {
     title: "QR Code Scanner",
     description:
       "Deployed a web app to verify event registrations using real-time QR code scanning. Integrated QuaggaJS and jsQR libraries for high-accuracy QR code decoding. Designed a secure backend using Node.js and MySQL for event data storage and management.",
-    GithubLink: "https://github.com/akshayrivers/QR-Code-Scanner",
-    LiveLink: "",
+    GithubLink: "https://github.com/akshayrivers/BoilerPlateNextjs",
+    LiveLink: "https://qr-code-scanner-sand.vercel.app",
   },
 ];
 
