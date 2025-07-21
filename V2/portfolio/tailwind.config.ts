@@ -9,14 +9,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        neon: '#39FF14',
+        bgDark: '#0d0d0d',
+        glitchPink: '#ff007c',
       },
       fontFamily: {
-        gothic: ["UnifrakturMaguntia", "cursive"],
-        serif: ["Playfair Display", "serif"],
+        mono: ['JetBrains Mono', 'monospace'],
       },
     },
-  },
-  plugins: [],
+  }
+  ,
+  plugins: [require("@tailwindcss/typography")],
 } satisfies Config;
