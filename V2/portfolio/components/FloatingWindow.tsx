@@ -1,6 +1,4 @@
 "use client";
-
-import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 type Props = {
@@ -12,7 +10,7 @@ type Props = {
 
 export default function FloatingWindow({
   children,
-  defaultPosition = { x: 200, y: 200 },
+  defaultPosition = { x: 0, y: 0 },
   zIndex = 1,
   onClick,
 }: Props) {
@@ -21,7 +19,7 @@ export default function FloatingWindow({
       drag
       dragMomentum={false}
       onClick={onClick}
-      dragConstraints={{ left: 0, right: 1000, top: 0, bottom: 1000 }}
+      dragConstraints={{ left: 0, right: 1000, top: -100, bottom: 1000 }}
       className="absolute shadow-xl"
       style={{ top: defaultPosition.y, left: defaultPosition.x, zIndex }}
     >
