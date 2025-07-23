@@ -2,10 +2,14 @@
 
 import TerminalUI from "@/components/terminal";
 
-export default function FullscreenTerminal() {
+type Props = {
+  command?: string;
+};
+
+export default function FullscreenTerminal({ command }: Props) {
   return (
-    <div className=" bg-black">
-      <TerminalUI />
+    <div className="bg-black">
+      <TerminalUI initialCommand={command} />
     </div>
   );
 }

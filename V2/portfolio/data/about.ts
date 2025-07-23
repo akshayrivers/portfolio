@@ -1,7 +1,8 @@
 const aboutFiles = [
     {
         name: "summary.txt",
-        content: "I'm Vinod Akshat, an engineering student passionate about systems, low-level programming, and dark-themed digital realms.",
+        content:
+            "I'm Vinod Akshat, an engineering student passionate about systems, low-level programming, and dark-themed digital realms.",
     },
     {
         name: "education.txt",
@@ -9,11 +10,20 @@ const aboutFiles = [
     },
     {
         name: "courses.txt",
-        content: "Operating Systems, Compilers, Networking, Cybersecurity",
+        content:
+            "Operating Systems, Compilers, Networking, Cybersecurity, Distributed Systems",
     },
     {
         name: "enrolled_paths.txt",
-        content: "TryHackMe Junior Penetration Tester, Rust Projects, DNS Resolver",
+        content:
+            "TryHackMe Junior Penetration Tester, Rust Projects, DNS Resolver, Cyberpunk Portfolio",
+    },
+    {
+        name: "links.md",
+        content: `- [GitHub](https://github.com/akshayrivers)
+- [LinkedIn](https://linkedin.com/in/vinod-akshat)
+- [Codeforces](https://codeforces.com/profile/Akshayforrivers)
+- [Portfolio](https://anony-messages-seven.vercel.app)`,
     },
 ];
 

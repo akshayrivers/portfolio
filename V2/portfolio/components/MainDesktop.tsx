@@ -11,8 +11,12 @@ import MemoryWindow from "@/app/memories/page";
 import BinWindow from "@/app/404/page";
 import WritingWindow from "@/app/writings/page";
 import AudioPlayer from "./AudioPlayer";
+import ContactPage from "@/app/contact/page";
+import FloatingIcon from "./FloatingIcons";
+import { title } from "process";
+import ExplorerView from "./ExploreView";
+import catFiles from "@/data/cat";
 
-// ---- CHANGED: Added position field!
 type WindowInstance = {
   id: string;
   type: string;
@@ -20,15 +24,35 @@ type WindowInstance = {
   minimized?: boolean;
   fullscreen?: boolean;
   position: { x: number; y: number };
+  command?: string;
 };
 
 export default function MainDesktop() {
   const [openWindows, setOpenWindows] = useState<WindowInstance[]>([]);
   const [zIndices, setZIndices] = useState<Record<string, number>>({});
   const [highestZ, setHighestZ] = useState(1);
-
-  // ---- ADDED: nextOffset for window cascade
   const [nextOffset, setNextOffset] = useState({ x: 100, y: 100 });
+
+  const [iconPositions, setIconPositions] = useState<
+    Record<string, { x: number; y: number }>
+  >({
+    terminal: { x: 20, y: 20 },
+    about: { x: 20, y: 100 },
+    projects: { x: 20, y: 180 },
+    writings: { x: 20, y: 260 },
+    memories: { x: 20, y: 340 },
+    resume: { x: 20, y: 420 },
+    bin: { x: 20, y: 500 },
+    contact: { x: 20, y: 600 },
+    batman: {
+      x: typeof window !== "undefined" ? window.innerWidth - 40 : 0,
+      y: 580,
+    },
+    schrodinger: {
+      x: typeof window !== "undefined" ? window.innerWidth - 40 : 0,
+      y: 460,
+    },
+  });
 
   const bringToFront = (id: string) => {
     const newZ = highestZ + 1;
@@ -40,8 +64,7 @@ export default function MainDesktop() {
     setOpenWindows((prev) => prev.filter((w) => w.cat !== cat));
   };
 
-  // ------------ CHANGED: openNewWindow now uses and advances offset!
-  const openNewWindow = (type: string, cat: string) => {
+  const openNewWindow = (type: string, cat: string, command?: string) => {
     const STEP = 30;
     const MAX_OFFSET = 240;
 
@@ -57,30 +80,26 @@ export default function MainDesktop() {
         minimized: false,
         fullscreen: false,
         position: nextOffset,
+        ...(command && { command }),
       };
       setOpenWindows((prev) => [...prev, newWindow]);
       setZIndices((prev) => ({ ...prev, [id]: highestZ + 1 }));
       setHighestZ((prev) => prev + 1);
-
-      setNextOffset((prev) => ({
-        x: 100 + ((prev.x - 100 + STEP) % MAX_OFFSET),
-        y: 100 + ((prev.y - 100 + STEP) % MAX_OFFSET),
-      }));
-      return;
+    } else {
+      const id = `${type}-${crypto.randomUUID()}`;
+      const newWindow: WindowInstance = {
+        id,
+        type,
+        cat,
+        minimized: false,
+        fullscreen: false,
+        position: nextOffset,
+        ...(command && { command }),
+      };
+      setOpenWindows((prev) => [...prev, newWindow]);
+      setZIndices((prev) => ({ ...prev, [id]: highestZ + 1 }));
+      setHighestZ((prev) => prev + 1);
     }
-
-    const id = `${type}-${crypto.randomUUID()}`;
-    const newWindow: WindowInstance = {
-      id,
-      type,
-      cat,
-      minimized: false,
-      fullscreen: false,
-      position: nextOffset,
-    };
-    setOpenWindows((prev) => [...prev, newWindow]);
-    setZIndices((prev) => ({ ...prev, [id]: highestZ + 1 }));
-    setHighestZ((prev) => prev + 1);
 
     setNextOffset((prev) => ({
       x: 100 + ((prev.x - 100 + STEP) % MAX_OFFSET),
@@ -150,16 +169,34 @@ export default function MainDesktop() {
     },
     {
       id: "bin",
-      title: "Recycle bin",
+      title: "Recycle Bin",
       icon: "/assets/icons/cat.png",
       cat: "bin",
     },
+    {
+      id: "contact",
+      title: "Contact Me",
+      icon: "/assets/icons/message.png",
+      cat: "explorer",
+    },
+    {
+      id: "batman",
+      title: "batsy",
+      icon: "/assets/icons/batman.png",
+      cat: "bin",
+    },
+    {
+      id: "schrodinger",
+      title: "If I exist or not",
+      icon: "/assets/icons/catman.png",
+      cat: "explorer",
+    },
   ];
 
-  const renderWindowContent = (type: string) => {
+  const renderWindowContent = (type: string, command?: string) => {
     switch (type) {
       case "terminal":
-        return <TerminalUI />;
+        return <TerminalUI initialCommand={command} />;
       case "about":
         return <AboutWindow />;
       case "projects":
@@ -170,10 +207,52 @@ export default function MainDesktop() {
         return <MemoryWindow />;
       case "resume":
         return (
-          <iframe src="/RESUME_VINOD_AKSHAT.pdf" className="w-full h-[80vh]" />
+          <iframe src="/RESUME_VINOD_AKSHAT.pdf" className="w-full h-[90vh]" />
         );
       case "bin":
         return <BinWindow />;
+      case "contact":
+        return (
+          <ContactPage
+            onTriggerCommand={(cmd) => {
+              if (cmd) {
+                openNewWindow("terminal", "terminal", cmd);
+              }
+            }}
+          />
+        );
+      case "batman":
+        return (
+          <>
+            Grief doesn't go away. You just learn to live with it.
+            <br />
+            But you're not alone in the dark — reach out:
+            <ul className="list-disc list-inside mt-2">
+              <li>
+                <strong>iCall:</strong> 9152987821
+              </li>
+              <li>
+                <strong>AASRA:</strong> 91-9820466726
+              </li>
+              <li>
+                <strong>Vandrevala Foundation:</strong> 1860 266 2345
+              </li>
+            </ul>
+            <p className="mt-2">
+              Be the hero of your own story. Start by asking for help.
+            </p>
+          </>
+        );
+
+      case "schrodinger":
+        return (
+          <>
+            <ExplorerView
+              title="cat in the bag"
+              files={catFiles}
+            ></ExplorerView>
+          </>
+        );
       default:
         return null;
     }
@@ -181,7 +260,6 @@ export default function MainDesktop() {
 
   return (
     <div className="relative w-screen h-screen bg-[url('/assets/desktop-bg3.jpg')] bg-cover text-white font-mono overflow-hidden">
-      {/* Desktop Icons */}
       <video
         autoPlay
         loop
@@ -190,24 +268,28 @@ export default function MainDesktop() {
         src="/assets/wallpapers/musashi.mp4"
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
-      <div className="absolute left-4 top-4 space-y-4 z-0">
-        {icons.map(({ id, title, icon, cat }) => (
-          <div
-            key={id}
-            onDoubleClick={() => openNewWindow(id, cat)}
-            className="flex flex-col items-center cursor-pointer hover:opacity-80"
-          >
-            <img src={icon} alt={title} className="w-12 h-12" />
-            <span className="text-sm mt-1">{title}</span>
-          </div>
-        ))}
-      </div>
+
+      {/* Desktop Icons */}
+      {icons.map(({ id, title, icon, cat }) => (
+        <FloatingIcon
+          key={id}
+          icon={icon}
+          title={title}
+          defaultPosition={iconPositions[id] || { x: 0, y: 0 }}
+          onDoubleClick={() => openNewWindow(id, cat)}
+          onDragEnd={(newPos) =>
+            setIconPositions((prev) => ({
+              ...prev,
+              [id]: newPos,
+            }))
+          }
+        />
+      ))}
 
       {/* Floating Windows */}
       {openWindows
         .filter((w) => !w.minimized)
-        // ---- CHANGED: added position for each window!
-        .map(({ id, type, fullscreen, position }) => {
+        .map(({ id, type, fullscreen, position, command }) => {
           const content = (
             <HudFrame
               title={type.toUpperCase()}
@@ -216,7 +298,7 @@ export default function MainDesktop() {
               onMinimize={() => minimizeWindow(id)}
               onFullscreen={() => toggleFullscreen(id)}
             >
-              {renderWindowContent(type)}
+              {renderWindowContent(type, command)}
             </HudFrame>
           );
 
@@ -230,7 +312,7 @@ export default function MainDesktop() {
           ) : (
             <FloatingWindow
               key={id}
-              defaultPosition={position} // ---- CHANGED: use dynamic position!
+              defaultPosition={position}
               zIndex={zIndices[id] || 1}
               onClick={() => bringToFront(id)}
             >
