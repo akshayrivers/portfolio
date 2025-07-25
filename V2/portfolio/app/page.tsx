@@ -58,31 +58,33 @@ export default function Home() {
     setLoading(true);
     let i = 0;
 
+    const video = document.createElement("video");
+    video.src = "/assets/wallpapers/musashi.mp4";
+    video.preload = "auto";
+
+    let hasVideoLoaded = false;
+
+    video.onloadeddata = () => {
+      hasVideoLoaded = true;
+      localStorage.setItem("videoLoaded", "true");
+    };
+
     const interval = setInterval(() => {
       setLoadingLines((prev) => [...prev, resourceLoadingLog[i]]);
       i++;
 
-      if (i === 1) {
-        // Start video preload when video line is triggered
-        const video = document.createElement("video");
-        video.src = "/assets/wallpapers/musashi.mp4";
-        video.preload = "auto";
-        video.onloadeddata = () => {
-          setVideoLoaded(true);
-          localStorage.setItem("videoLoaded", "true"); // Cache it
-        };
-      }
-
       if (i >= resourceLoadingLog.length) {
         clearInterval(interval);
 
-        // Wait for video to load
+        // Wait for video to load or timeout after 5s max
+        const start = Date.now();
         const checkInterval = setInterval(() => {
-          if (videoLoaded) {
+          const timeout = Date.now() - start > 5000;
+          if (hasVideoLoaded || timeout) {
             clearInterval(checkInterval);
             setTimeout(() => setStarted(true), 1000);
           }
-        }, 200);
+        }, 100);
       }
     }, 600);
   };
