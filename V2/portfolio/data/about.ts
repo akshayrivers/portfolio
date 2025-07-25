@@ -6,7 +6,7 @@ const aboutFiles = [
     },
     {
         name: "education.txt",
-        content: "NIT Srinagar | B.Tech in Computer Science | 2022–2026",
+        content: "NIT Srinagar | B.Tech in Computer Science | 2023-2027",
     },
     {
         name: "courses.txt",

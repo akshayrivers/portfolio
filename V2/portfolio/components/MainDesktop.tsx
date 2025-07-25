@@ -5,17 +5,17 @@ import FloatingWindow from "./FloatingWindow";
 import HudFrame from "./HudFrame";
 import TerminalUI from "./terminal";
 import Dock from "./Dock";
-import ProjectWindow from "@/app/projects/page";
-import AboutWindow from "@/app/about/page";
-import MemoryWindow from "@/app/memories/page";
-import BinWindow from "@/app/404/page";
-import WritingWindow from "@/app/writings/page";
 import AudioPlayer from "./AudioPlayer";
-import ContactPage from "@/app/contact/page";
+
 import FloatingIcon from "./FloatingIcons";
 import { title } from "process";
 import ExplorerView from "./ExploreView";
 import catFiles from "@/data/cat";
+import aboutFiles from "@/data/about";
+import ideaFiles from "@/data/ideas";
+import memoriesFiles from "@/data/memories";
+import projectFiles from "@/data/projects";
+import contactFiles from "@/data/contact";
 
 type WindowInstance = {
   id: string;
@@ -198,22 +198,27 @@ export default function MainDesktop() {
       case "terminal":
         return <TerminalUI initialCommand={command} />;
       case "about":
-        return <AboutWindow />;
+        return <ExplorerView title="about" files={aboutFiles} />;
       case "projects":
-        return <ProjectWindow />;
+        return <ExplorerView title="Projects" files={projectFiles} />;
       case "writings":
-        return <WritingWindow />;
+        return <ExplorerView title="writings" files={ideaFiles} />;
       case "memories":
-        return <MemoryWindow />;
+        return <ExplorerView title="memories" files={memoriesFiles} />;
       case "resume":
         return (
           <iframe src="/RESUME_VINOD_AKSHAT.pdf" className="w-full h-[90vh]" />
         );
+      case "explorer":
+        return <ExplorerView title="about" files={aboutFiles} />;
+
       case "bin":
-        return <BinWindow />;
+        return <ExplorerView title="scarpped ideas" files={ideaFiles} />;
       case "contact":
         return (
-          <ContactPage
+          <ExplorerView
+            title="contact me"
+            files={contactFiles}
             onTriggerCommand={(cmd) => {
               if (cmd) {
                 openNewWindow("terminal", "terminal", cmd);
@@ -246,13 +251,9 @@ export default function MainDesktop() {
 
       case "schrodinger":
         return (
-          <>
-            <ExplorerView
-              title="cat in the bag"
-              files={catFiles}
-            ></ExplorerView>
-          </>
+          <ExplorerView title="cat in the bag" files={catFiles}></ExplorerView>
         );
+
       default:
         return null;
     }
