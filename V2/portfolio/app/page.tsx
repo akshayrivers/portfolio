@@ -8,6 +8,7 @@ export default function Home() {
   const [bootLines, setBootLines] = useState<string[]>([]);
   const [command, setCommand] = useState("");
   const [bootComplete, setBootComplete] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fullBootLog = [
     "[ OK ] Initializing Vinod Akshat Virtual Machine...",
@@ -22,7 +23,11 @@ export default function Home() {
     const alreadyBooted = localStorage.getItem("hasBooted");
 
     if (alreadyBooted === "true") {
-      setStarted(true);
+      // delay transition by 2 seconds for resource loading
+      setLoading(true);
+      setTimeout(() => {
+        setStarted(true);
+      }, 2000);
     } else {
       let i = 0;
       const interval = setInterval(() => {
@@ -40,11 +45,22 @@ export default function Home() {
   const handleCommand = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && command.trim().toLowerCase() === "startx") {
       localStorage.setItem("hasBooted", "true");
-      setStarted(true);
+      setLoading(true);
+      setTimeout(() => {
+        setStarted(true);
+      }, 2000);
     }
   };
 
   if (started) return <MainDesktop />;
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full bg-black text-green-400 font-mono p-6 items-center justify-center">
+        <p>Loading resources...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full bg-black text-green-400 font-mono p-6 items-center justify-center">

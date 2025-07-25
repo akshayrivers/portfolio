@@ -6,15 +6,15 @@ import HudFrame from "./HudFrame";
 import TerminalUI from "./terminal";
 import Dock from "./Dock";
 import AudioPlayer from "./AudioPlayer";
-
 import FloatingIcon from "./FloatingIcons";
-import { title } from "process";
 import ExplorerView from "./ExploreView";
 import catFiles from "@/data/cat";
 import aboutFiles from "@/data/about";
 import ideaFiles from "@/data/ideas";
 import memoriesFiles from "@/data/memories";
 import projectFiles from "@/data/projects";
+import Image from "next/image";
+
 import contactFiles from "@/data/contact";
 
 type WindowInstance = {
@@ -198,7 +198,11 @@ export default function MainDesktop() {
       case "terminal":
         return <TerminalUI initialCommand={command} />;
       case "about":
-        return <ExplorerView title="about" files={aboutFiles} />;
+        return (
+          <>
+            <ExplorerView title="about" files={aboutFiles} />;
+          </>
+        );
       case "projects":
         return <ExplorerView title="Projects" files={projectFiles} />;
       case "writings":
@@ -260,7 +264,7 @@ export default function MainDesktop() {
   };
 
   return (
-    <div className="relative w-screen h-screen bg-[url('/assets/desktop-bg3.jpg')] bg-cover text-white font-mono overflow-hidden">
+    <div className="relative w-screen h-screen bg-black bg-cover text-white font-mono overflow-hidden">
       <video
         autoPlay
         loop
@@ -269,7 +273,6 @@ export default function MainDesktop() {
         src="/assets/wallpapers/musashi.mp4"
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
-
       {/* Desktop Icons */}
       {icons.map(({ id, title, icon, cat }) => (
         <FloatingIcon
@@ -286,7 +289,6 @@ export default function MainDesktop() {
           }
         />
       ))}
-
       {/* Floating Windows */}
       {openWindows
         .filter((w) => !w.minimized)
@@ -321,7 +323,6 @@ export default function MainDesktop() {
             </FloatingWindow>
           );
         })}
-
       {/* Dock */}
       <AudioPlayer />
       <Dock

@@ -1,0 +1,3 @@
+![Me in the mist](/assets/me.jpeg)
+
+Hi, I’m Akshay — a computer science student fascinated by systems programming, cybersecurity, and low-level software design. I enjoy building things from scratch, whether it's a DNS resolver in Rust or a memory allocator in C. I prefer backend over frontend and love terminal-based UIs, often drawing inspiration from cyberpunk aesthetics. Outside of tech, I find solace in foggy hikes, existential fiction, and introspective writing — currently working on a story titled _Cigarettes_. My learning journey is hands-on, experimental, and deeply rooted in curiosity for how things work under the hood.
