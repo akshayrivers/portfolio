@@ -9,6 +9,7 @@ export default function Home() {
   const [command, setCommand] = useState("");
   const [bootComplete, setBootComplete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingLines, setLoadingLines] = useState<string[]>([]);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
   const fullBootLog = [
@@ -20,12 +21,25 @@ export default function Home() {
     "Type `startx` to begin.",
   ];
 
+  const resourceLoadingLog = [
+    "[ OK ] Fetching fonts...",
+    "[ OK ] Loading wallpaper video...",
+    "[ OK ] Bootstrapping desktop environment...",
+    "Launching interface...",
+  ];
+
   useEffect(() => {
     const alreadyBooted = localStorage.getItem("hasBooted");
+    const videoAlreadyCached = localStorage.getItem("videoLoaded") === "true";
 
-    if (alreadyBooted === "true") {
+    if (alreadyBooted === "true" && videoAlreadyCached) {
+      // Skip loading animation if video was cached
       setLoading(true);
-      preloadVideo();
+      setTimeout(() => {
+        setStarted(true);
+      }, 1000);
+    } else if (alreadyBooted === "true") {
+      preloadResources();
     } else {
       let i = 0;
       const interval = setInterval(() => {
@@ -40,30 +54,58 @@ export default function Home() {
     }
   }, []);
 
-  const preloadVideo = () => {
-    const video = document.createElement("video");
-    video.src = "/assets/wallpapers/musashi.mp4";
-    video.preload = "auto";
-    video.onloadeddata = () => {
-      setVideoLoaded(true);
-      setStarted(true);
-    };
+  const preloadResources = () => {
+    setLoading(true);
+    let i = 0;
+
+    const interval = setInterval(() => {
+      setLoadingLines((prev) => [...prev, resourceLoadingLog[i]]);
+      i++;
+
+      if (i === 1) {
+        // Start video preload when video line is triggered
+        const video = document.createElement("video");
+        video.src = "/assets/wallpapers/musashi.mp4";
+        video.preload = "auto";
+        video.onloadeddata = () => {
+          setVideoLoaded(true);
+          localStorage.setItem("videoLoaded", "true"); // Cache it
+        };
+      }
+
+      if (i >= resourceLoadingLog.length) {
+        clearInterval(interval);
+
+        // Wait for video to load
+        const checkInterval = setInterval(() => {
+          if (videoLoaded) {
+            clearInterval(checkInterval);
+            setTimeout(() => setStarted(true), 1000);
+          }
+        }, 200);
+      }
+    }, 600);
   };
 
   const handleCommand = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && command.trim().toLowerCase() === "startx") {
       localStorage.setItem("hasBooted", "true");
-      setLoading(true);
-      preloadVideo();
+      preloadResources();
     }
   };
 
-  if (started && videoLoaded) return <MainDesktop />;
+  if (started) return <MainDesktop />;
 
   if (loading) {
     return (
       <div className="flex h-screen w-full bg-black text-green-400 font-mono p-6 items-center justify-center">
-        <p>Loading resources...</p>
+        <div className="w-full max-w-2xl">
+          {loadingLines.map((line, index) => (
+            <p key={index} className="mb-1 whitespace-pre-wrap">
+              {line}
+            </p>
+          ))}
+        </div>
       </div>
     );
   }
