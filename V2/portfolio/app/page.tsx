@@ -9,6 +9,7 @@ export default function Home() {
   const [command, setCommand] = useState("");
   const [bootComplete, setBootComplete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const fullBootLog = [
     "[ OK ] Initializing Vinod Akshat Virtual Machine...",
@@ -23,11 +24,8 @@ export default function Home() {
     const alreadyBooted = localStorage.getItem("hasBooted");
 
     if (alreadyBooted === "true") {
-      // delay transition by 2 seconds for resource loading
       setLoading(true);
-      setTimeout(() => {
-        setStarted(true);
-      }, 2000);
+      preloadVideo();
     } else {
       let i = 0;
       const interval = setInterval(() => {
@@ -42,17 +40,25 @@ export default function Home() {
     }
   }, []);
 
+  const preloadVideo = () => {
+    const video = document.createElement("video");
+    video.src = "/assets/wallpapers/musashi.mp4";
+    video.preload = "auto";
+    video.onloadeddata = () => {
+      setVideoLoaded(true);
+      setStarted(true);
+    };
+  };
+
   const handleCommand = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && command.trim().toLowerCase() === "startx") {
       localStorage.setItem("hasBooted", "true");
       setLoading(true);
-      setTimeout(() => {
-        setStarted(true);
-      }, 2000);
+      preloadVideo();
     }
   };
 
-  if (started) return <MainDesktop />;
+  if (started && videoLoaded) return <MainDesktop />;
 
   if (loading) {
     return (
@@ -70,7 +76,6 @@ export default function Home() {
             {line}
           </p>
         ))}
-
         {bootComplete && (
           <div className="flex items-center gap-2 mt-4 animate-fade-in">
             <span className="animate-pulse">$</span>

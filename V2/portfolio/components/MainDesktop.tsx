@@ -270,6 +270,7 @@ export default function MainDesktop() {
         loop
         muted
         playsInline
+        preload="auto"
         src="/assets/wallpapers/musashi.mp4"
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
