@@ -59,7 +59,7 @@ export default function Home() {
     let i = 0;
 
     const video = document.createElement("video");
-    video.src = "/assets/wallpapers/musashi.mp4";
+    video.src = "/assets/wallpapers/ellie.mp4";
     video.preload = "auto";
 
     let hasVideoLoaded = false;

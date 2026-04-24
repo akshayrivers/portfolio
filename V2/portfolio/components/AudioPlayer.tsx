@@ -2,35 +2,42 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function AudioPlayer() {
+export default function AudioPlayer({ src }: { src: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new window.Audio("/sounds/typewriter.mp3");
+    if (!src) return;
+
+    // Stop old audio if exists
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = src;
+    } else {
+      audioRef.current = new Audio(src);
       audioRef.current.loop = true;
       audioRef.current.volume = 0.3;
     }
 
-    // AUTOPLAY on mount
-    const tryPlay = () => {
-      audioRef
-        .current!.play()
-        .then(() => setPlaying(true))
-        .catch(() => setPlaying(false)); // Will fail silently if not allowed yet
+    const playAudio = async () => {
+      try {
+        await audioRef.current!.play();
+        setPlaying(true);
+      } catch {
+        setPlaying(false);
+      }
     };
 
-    tryPlay();
+    playAudio();
 
     return () => {
       audioRef.current?.pause();
     };
-  }, []);
+  }, [src]);
 
-  // Click to toggle music
   const toggleAudio = () => {
     if (!audioRef.current) return;
+
     if (audioRef.current.paused) {
       audioRef.current.play();
       setPlaying(true);
@@ -42,10 +49,8 @@ export default function AudioPlayer() {
 
   return (
     <button
-      className={`fixed bottom-4 right-6 z-50 bg-[#161a1f]/75 px-3 py-2 rounded-md border border-cyan-500 text-white font-mono text-xs hover:bg-[#262f40]/80 transition shadow-md`}
+      className="fixed bottom-4 right-6 z-50 bg-[#161a1f]/75 px-3 py-2 rounded-md border border-cyan-500 text-white font-mono text-xs hover:bg-[#262f40]/80 transition shadow-md"
       onClick={toggleAudio}
-      tabIndex={0}
-      aria-label={playing ? "Pause synthwave audio" : "Play synthwave audio"}
       style={{ backdropFilter: "blur(4px)" }}
     >
       {playing ? "🔊 Sound: ON" : "🔇 Sound: OFF"}

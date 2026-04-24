@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FloatingWindow from "./FloatingWindow";
 import HudFrame from "./HudFrame";
 import TerminalUI from "./terminal";
@@ -16,6 +16,7 @@ import projectFiles from "@/data/projects";
 import Image from "next/image";
 
 import contactFiles from "@/data/contact";
+import { video } from "framer-motion/client";
 
 type WindowInstance = {
   id: string;
@@ -26,7 +27,32 @@ type WindowInstance = {
   position: { x: number; y: number };
   command?: string;
 };
-
+const themes = {
+  spiderman: {
+    video: "/assets/wallpapers/spider-man.mp4",
+    music: "/sounds/hateyourself.mp3",
+  },
+  ellie: {
+    video: "/assets/wallpapers/ellie.mp4",
+    music: "/sounds/ellie.mp3",
+  },
+  sekiro: {
+    video: "/assets/wallpapers/sekiro.mp4",
+    music: "/sounds/explosion.mp3",
+  },
+  musashi: {
+    video: "/assets/wallpapers/musashi.mp4",
+    music: "/sounds/typewriter.mp3",
+  },
+  manglu: {
+    video: "/assets/wallpapers/coming-soon.mp4",
+    music: "/sounds/myoldways.mp3",
+  },
+  redsky: {
+    video: "/assets/wallpapers/red-sky.mp4",
+    music: "/sounds/explosion.mp3",
+  },
+};
 export default function MainDesktop() {
   const [openWindows, setOpenWindows] = useState<WindowInstance[]>([]);
   const [zIndices, setZIndices] = useState<Record<string, number>>({});
@@ -113,20 +139,20 @@ export default function MainDesktop() {
 
   const minimizeWindow = (id: string) => {
     setOpenWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, minimized: true } : w))
+      prev.map((w) => (w.id === id ? { ...w, minimized: true } : w)),
     );
   };
 
   const restoreWindow = (id: string) => {
     setOpenWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, minimized: false } : w))
+      prev.map((w) => (w.id === id ? { ...w, minimized: false } : w)),
     );
     bringToFront(id);
   };
 
   const toggleFullscreen = (id: string) => {
     setOpenWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, fullscreen: !w.fullscreen } : w))
+      prev.map((w) => (w.id === id ? { ...w, fullscreen: !w.fullscreen } : w)),
     );
   };
 
@@ -262,18 +288,40 @@ export default function MainDesktop() {
         return null;
     }
   };
+  const [currentTheme, setCurrentTheme] =
+    useState<keyof typeof themes>("spiderman");
+  const currentWallpaper = themes[currentTheme].video;
+  const currentMusic = themes[currentTheme].music;
 
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved && saved in themes) {
+      setCurrentTheme(saved as keyof typeof themes);
+    }
+  }, []);
   return (
     <div className="relative w-screen h-screen bg-black bg-cover text-white font-mono overflow-hidden">
       <video
+        key={currentTheme}
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        src="/assets/wallpapers/musashi.mp4"
+        src={`${themes[currentTheme].video}?t=${Date.now()}`}
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
+      <div className="absolute top-4 right-4 z-10 flex gap-2 bg-black/40 p-2 rounded">
+        {Object.keys(themes).map((theme) => (
+          <button
+            key={theme}
+            onClick={() => setCurrentTheme(theme as keyof typeof themes)}
+            className="text-xs px-2 py-1 bg-white/10 hover:bg-white/20 rounded"
+          >
+            {theme}
+          </button>
+        ))}
+      </div>
       {/* Desktop Icons */}
       {icons.map(({ id, title, icon, cat }) => (
         <FloatingIcon
@@ -325,7 +373,7 @@ export default function MainDesktop() {
           );
         })}
       {/* Dock */}
-      <AudioPlayer />
+      <AudioPlayer src={currentMusic} />
       <Dock
         openNewWindow={openNewWindow}
         openWindows={openWindows}
