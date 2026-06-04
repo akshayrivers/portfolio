@@ -110,8 +110,7 @@ export default function TerminalUI({ initialCommand }: Props) {
           "  echo [text] Display a line of text",
           "  clear       Clear the terminal screen",
           "Applications:",
-          "  message.sh  Execute contact script",
-          "  rust_demo   Run WASM performance test"
+          "  message.sh  Execute contact script"
         );
         break;
 

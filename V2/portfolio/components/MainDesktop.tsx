@@ -253,7 +253,7 @@ export default function MainDesktop() {
 
       case "schrodinger":
         return (
-          <ExplorerView title="cat in the bag" files={catFiles}></ExplorerView>
+          <ExplorerView title="cat in the bag" path="/home/vinod/secret"></ExplorerView>
         );
 
       case "rust":

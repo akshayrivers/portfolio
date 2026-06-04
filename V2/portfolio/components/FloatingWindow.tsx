@@ -23,7 +23,6 @@ export default function FloatingWindow({
     <motion.div
       drag={!isFullscreen && !isMinimized}
       dragMomentum={false}
-      dragHandleClassName="drag-handle"
       onClick={onClick}
       className={clsx(
         isFullscreen ? "fixed inset-0 z-[10000] pointer-events-auto" : "absolute shadow-xl pointer-events-auto",
