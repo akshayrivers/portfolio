@@ -16,7 +16,7 @@ import projectFiles from "@/data/projects";
 import Image from "next/image";
 
 import contactFiles from "@/data/contact";
-import { video } from "framer-motion/client";
+import { themes, ThemeKey } from "@/data/themes";
 
 type WindowInstance = {
   id: string;
@@ -27,32 +27,7 @@ type WindowInstance = {
   position: { x: number; y: number };
   command?: string;
 };
-const themes = {
-  spiderman: {
-    video: "/assets/wallpapers/spider-man.mp4",
-    music: "/sounds/hateyourself.mp3",
-  },
-  ellie: {
-    video: "/assets/wallpapers/ellie.mp4",
-    music: "/sounds/ellie.mp3",
-  },
-  sekiro: {
-    video: "/assets/wallpapers/sekiro.mp4",
-    music: "/sounds/explosion.mp3",
-  },
-  musashi: {
-    video: "/assets/wallpapers/musashi.mp4",
-    music: "/sounds/typewriter.mp3",
-  },
-  manglu: {
-    video: "/assets/wallpapers/coming-soon.mp4",
-    music: "/sounds/myoldways.mp3",
-  },
-  redsky: {
-    video: "/assets/wallpapers/red-sky.mp4",
-    music: "/sounds/explosion.mp3",
-  },
-};
+
 export default function MainDesktop() {
   const [openWindows, setOpenWindows] = useState<WindowInstance[]>([]);
   const [zIndices, setZIndices] = useState<Record<string, number>>({});
@@ -289,33 +264,36 @@ export default function MainDesktop() {
     }
   };
   const [currentTheme, setCurrentTheme] =
-    useState<keyof typeof themes>("spiderman");
+    useState<ThemeKey>("spiderman");
   const currentWallpaper = themes[currentTheme].video;
   const currentMusic = themes[currentTheme].music;
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved && saved in themes) {
-      setCurrentTheme(saved as keyof typeof themes);
+      setCurrentTheme(saved as ThemeKey);
     }
   }, []);
   return (
     <div className="relative w-screen h-screen bg-black bg-cover text-white font-mono overflow-hidden">
       <video
-        key={currentTheme}
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        src={`${themes[currentTheme].video}?t=${Date.now()}`}
+        src={themes[currentTheme].video}
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
       <div className="absolute top-4 right-4 z-10 flex gap-2 bg-black/40 p-2 rounded">
         {Object.keys(themes).map((theme) => (
           <button
             key={theme}
-            onClick={() => setCurrentTheme(theme as keyof typeof themes)}
+            onClick={() => {
+              const newTheme = theme as ThemeKey;
+              setCurrentTheme(newTheme);
+              localStorage.setItem("theme", newTheme);
+            }}
             className="text-xs px-2 py-1 bg-white/10 hover:bg-white/20 rounded"
           >
             {theme}

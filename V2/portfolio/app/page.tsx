@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import MainDesktop from "../components/MainDesktop";
 
+import { themes } from "@/data/themes";
+
 export default function Home() {
   const [started, setStarted] = useState(false);
   const [bootLines, setBootLines] = useState<string[]>([]);
@@ -10,7 +12,6 @@ export default function Home() {
   const [bootComplete, setBootComplete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingLines, setLoadingLines] = useState<string[]>([]);
-  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const fullBootLog = [
     "[ OK ] Initializing Vinod Akshat Virtual Machine...",
@@ -23,7 +24,7 @@ export default function Home() {
 
   const resourceLoadingLog = [
     "[ OK ] Fetching fonts...",
-    "[ OK ] Loading wallpaper video...",
+    "[ OK ] Loading wallpaper videos...",
     "[ OK ] Bootstrapping desktop environment...",
     "Launching interface...",
   ];
@@ -58,16 +59,20 @@ export default function Home() {
     setLoading(true);
     let i = 0;
 
-    const video = document.createElement("video");
-    video.src = "/assets/wallpapers/ellie.mp4";
-    video.preload = "auto";
+    const videoUrls = Object.values(themes).map((t) => t.video);
+    let loadedCount = 0;
 
-    let hasVideoLoaded = false;
-
-    video.onloadeddata = () => {
-      hasVideoLoaded = true;
-      localStorage.setItem("videoLoaded", "true");
-    };
+    videoUrls.forEach((url) => {
+      const video = document.createElement("video");
+      video.src = url;
+      video.preload = "auto";
+      video.onloadeddata = () => {
+        loadedCount++;
+        if (loadedCount === videoUrls.length) {
+          localStorage.setItem("videoLoaded", "true");
+        }
+      };
+    });
 
     const interval = setInterval(() => {
       setLoadingLines((prev) => [...prev, resourceLoadingLog[i]]);
@@ -76,11 +81,11 @@ export default function Home() {
       if (i >= resourceLoadingLog.length) {
         clearInterval(interval);
 
-        // Wait for video to load or timeout after 5s max
+        // Wait for videos to load or timeout after 10s max
         const start = Date.now();
         const checkInterval = setInterval(() => {
-          const timeout = Date.now() - start > 5000;
-          if (hasVideoLoaded || timeout) {
+          const timeout = Date.now() - start > 10000;
+          if (loadedCount === videoUrls.length || timeout) {
             clearInterval(checkInterval);
             setTimeout(() => setStarted(true), 1000);
           }
