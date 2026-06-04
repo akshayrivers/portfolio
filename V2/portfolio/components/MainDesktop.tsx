@@ -17,6 +17,7 @@ import Image from "next/image";
 
 import contactFiles from "@/data/contact";
 import { themes, ThemeKey } from "@/data/themes";
+import RustDemo from "./RustDemo";
 
 type WindowInstance = {
   id: string;
@@ -181,6 +182,12 @@ export default function MainDesktop() {
       cat: "explorer",
     },
     {
+      id: "rust",
+      title: "Rust WASM",
+      icon: "/assets/icons/bash.png",
+      cat: "rust",
+    },
+    {
       id: "batman",
       title: "batsy",
       icon: "/assets/icons/batman.png",
@@ -199,31 +206,27 @@ export default function MainDesktop() {
       case "terminal":
         return <TerminalUI initialCommand={command} />;
       case "about":
-        return (
-          <>
-            <ExplorerView title="about" files={aboutFiles} />;
-          </>
-        );
+        return <ExplorerView title="About Me" path="/home/vinod/about" />;
       case "projects":
-        return <ExplorerView title="Projects" files={projectFiles} />;
+        return <ExplorerView title="Projects" path="/home/vinod/projects" />;
       case "writings":
-        return <ExplorerView title="writings" files={ideaFiles} />;
+        return <ExplorerView title="Writings" path="/home/vinod/ideas" />;
       case "memories":
-        return <ExplorerView title="memories" files={memoriesFiles} />;
+        return <ExplorerView title="Memories" path="/home/vinod/memories" />;
       case "resume":
         return (
           <iframe src="/RESUME_VINOD_AKSHAT.pdf" className="w-full h-[90vh]" />
         );
       case "explorer":
-        return <ExplorerView title="about" files={aboutFiles} />;
+        return <ExplorerView title="Explorer" path="/home/vinod" />;
 
       case "bin":
-        return <ExplorerView title="scarpped ideas" files={ideaFiles} />;
+        return <ExplorerView title="Recycle Bin" path="/home/vinod/ideas" />;
       case "contact":
         return (
           <ExplorerView
-            title="contact me"
-            files={contactFiles}
+            title="Contact Me"
+            path="/home/vinod/contact"
             onTriggerCommand={(cmd) => {
               if (cmd) {
                 openNewWindow("terminal", "terminal", cmd);
@@ -258,6 +261,9 @@ export default function MainDesktop() {
         return (
           <ExplorerView title="cat in the bag" files={catFiles}></ExplorerView>
         );
+
+      case "rust":
+        return <RustDemo />;
 
       default:
         return null;
@@ -318,38 +324,26 @@ export default function MainDesktop() {
       ))}
       {/* Floating Windows */}
       {openWindows
-        .filter((w) => !w.minimized)
-        .map(({ id, type, fullscreen, position, command }) => {
-          const content = (
+        .map((w) => (
+          <FloatingWindow
+            key={w.id}
+            defaultPosition={w.position}
+            zIndex={zIndices[w.id] || 1}
+            onClick={() => bringToFront(w.id)}
+            isFullscreen={w.fullscreen}
+            isMinimized={w.minimized}
+          >
             <HudFrame
-              title={type.toUpperCase()}
-              mode={fullscreen ? "fullscreen" : "window"}
-              onClose={() => closeWindow(id)}
-              onMinimize={() => minimizeWindow(id)}
-              onFullscreen={() => toggleFullscreen(id)}
+              title={w.type.toUpperCase()}
+              mode={w.fullscreen ? "fullscreen" : "window"}
+              onClose={() => closeWindow(w.id)}
+              onMinimize={() => minimizeWindow(w.id)}
+              onFullscreen={() => toggleFullscreen(w.id)}
             >
-              {renderWindowContent(type, command)}
+              {renderWindowContent(w.type, w.command)}
             </HudFrame>
-          );
-
-          return fullscreen ? (
-            <div
-              key={id}
-              className="fixed top-0 left-0 w-screen h-screen z-[9999]"
-            >
-              {content}
-            </div>
-          ) : (
-            <FloatingWindow
-              key={id}
-              defaultPosition={position}
-              zIndex={zIndices[id] || 1}
-              onClick={() => bringToFront(id)}
-            >
-              {content}
-            </FloatingWindow>
-          );
-        })}
+          </FloatingWindow>
+        ))}
       {/* Dock */}
       <AudioPlayer src={currentMusic} />
       <Dock

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import useFileContent from "@/hooks/useFileContent";
+import { useVFS, VFSNode } from "@/hooks/useVFS";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -13,24 +14,18 @@ import {
   FileQuestion,
   Globe,
   Terminal,
+  Folder,
 } from "lucide-react";
-
-type File = {
-  name: string;
-  content?: string;
-  src?: string;
-  type?: "video" | "audio" | "image" | "markdown" | "sh" | string;
-};
 
 type Props = {
   title: string;
-  files: File[];
+  path: string; // The base path for this explorer window
   onTriggerCommand?: (command: string) => void;
 };
 
 function getFileType(
   name: string,
-  src?: string
+  node?: VFSNode
 ):
   | "md"
   | "txt"
@@ -40,7 +35,10 @@ function getFileType(
   | "url"
   | "sh"
   | "externalVideo"
+  | "dir"
   | "unknown" {
+  if (node?.type === "dir") return "dir";
+  const src = node?.src;
   if (src && /(youtube\.com|youtu\.be|vimeo\.com)/i.test(src))
     return "externalVideo";
   if (name.endsWith(".md")) return "md";
@@ -53,10 +51,12 @@ function getFileType(
   return "unknown";
 }
 
-function getFileIcon(name: string, src?: string) {
-  const type = getFileType(name, src);
+function getFileIcon(name: string, node?: VFSNode) {
+  const type = getFileType(name, node);
   const className = "mr-2 flex-shrink-0";
   switch (type) {
+    case "dir":
+      return <Folder size={16} className={`text-yellow-500 ${className}`} />;
     case "md":
       return <BookOpen size={16} className={`text-green-400 ${className}`} />;
     case "txt":
@@ -100,19 +100,37 @@ function embedUrl(src: string): string {
 
 export default function ExplorerView({
   title,
-  files,
+  path,
   onTriggerCommand,
 }: Props) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { getNodeByPath } = useVFS();
+  const [currentViewPath, setCurrentViewPath] = useState(path);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+
+  const currentNode = getNodeByPath(currentViewPath, currentViewPath);
+  const files = useMemo(() => {
+    if (currentNode?.type === "dir" && currentNode.children) {
+        return Object.entries(currentNode.children).map(([name, node]) => ({
+            name,
+            ...node
+        }));
+    }
+    return [];
+  }, [currentNode]);
+
+  const selectedFile = useMemo(() => {
+    if (!selectedFileName) return files[0] || null;
+    return files.find(f => f.name === selectedFileName) || files[0] || null;
+  }, [selectedFileName, files]);
 
   useEffect(() => {
-    if (!selectedFile && files.length > 0) {
-      setSelectedFile(files[0]);
+    if (files.length > 0 && !selectedFileName) {
+        setSelectedFileName(files[0].name);
     }
-  }, [files, selectedFile]);
+  }, [files, selectedFileName]);
 
   const fileType = selectedFile
-    ? getFileType(selectedFile.name, selectedFile.src)
+    ? getFileType(selectedFile.name, selectedFile)
     : null;
 
   const shouldFetch =
@@ -122,26 +140,53 @@ export default function ExplorerView({
     shouldFetch ? selectedFile?.src! : null
   );
 
+  const handleFileClick = (file: any) => {
+    if (file.type === 'dir') {
+        const nextPath = currentViewPath === '/' ? `/${file.name}` : `${currentViewPath}/${file.name}`;
+        setCurrentViewPath(nextPath);
+        setSelectedFileName(null);
+    } else {
+        setSelectedFileName(file.name);
+        if (file.name.endsWith(".sh") && onTriggerCommand) {
+            onTriggerCommand(file.name);
+        }
+    }
+  };
+
+  const handleBack = () => {
+    if (currentViewPath === '/') return;
+    const parts = currentViewPath.split('/').filter(Boolean);
+    parts.pop();
+    const nextPath = '/' + parts.join('/');
+    setCurrentViewPath(nextPath);
+    setSelectedFileName(null);
+  };
+
   return (
     <div className="flex h-[90vh] w-full overflow-hidden rounded-lg shadow-lg border border-gray-700 bg-zinc-900">
       {/* Sidebar */}
       <div className="w-1/3 max-h-[90vh] overflow-y-auto bg-black bg-opacity-20 p-3 border-r border-gray-700">
-        <h2 className="text-green-400 font-bold mb-3">{title}/</h2>
+        <div className="flex items-center justify-between mb-3">
+            <h2 className="text-green-400 font-bold truncate">{currentViewPath}</h2>
+            {currentViewPath !== '/' && (
+                <button 
+                    onClick={handleBack}
+                    className="text-xs text-zinc-400 hover:text-white bg-zinc-800 px-2 py-1 rounded"
+                >
+                    Back
+                </button>
+            )}
+        </div>
         <ul className="space-y-1 text-sm">
           {files.map((file) => (
             <li
               key={file.name}
-              onClick={() => {
-                setSelectedFile(file);
-                if (file.name.endsWith(".sh") && onTriggerCommand) {
-                  onTriggerCommand(file.name);
-                }
-              }}
+              onClick={() => handleFileClick(file)}
               className={`cursor-pointer flex items-center hover:bg-zinc-800 p-1 rounded transition text-white ${
                 selectedFile?.name === file.name ? "bg-zinc-800" : ""
               }`}
             >
-              {getFileIcon(file.name, file.src)}
+              {getFileIcon(file.name, file as VFSNode)}
               {file.name}
             </li>
           ))}
@@ -150,10 +195,10 @@ export default function ExplorerView({
 
       {/* Viewer */}
       <div className="flex-1 bg-zinc-950 p-4 overflow-auto relative">
-        {selectedFile ? (
+        {selectedFile && selectedFile.type !== 'dir' ? (
           <div>
             <div className="text-sm text-gray-400 mb-2 border-b border-gray-700 pb-1 font-mono">
-              /{title}/{selectedFile.name}
+              {currentViewPath}/{selectedFile.name}
             </div>
 
             {loading ? (
@@ -259,6 +304,10 @@ export default function ExplorerView({
               <div className="text-red-400">Unsupported file type.</div>
             )}
           </div>
+        ) : selectedFile?.type === 'dir' ? (
+            <div className="flex items-center justify-center h-full text-zinc-500 italic">
+                Double click folder to open, or select a file to view content.
+            </div>
         ) : (
           <div className="text-gray-500 italic">
             Select a file from the sidebar to view.

@@ -1,11 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
+import clsx from "clsx";
 
 type Props = {
   children: React.ReactNode;
   defaultPosition?: { x: number; y: number };
   zIndex?: number;
   onClick?: () => void;
+  isFullscreen?: boolean;
+  isMinimized?: boolean;
 };
 
 export default function FloatingWindow({
@@ -13,15 +16,20 @@ export default function FloatingWindow({
   defaultPosition = { x: 0, y: 0 },
   zIndex = 1,
   onClick,
+  isFullscreen = false,
+  isMinimized = false,
 }: Props) {
   return (
     <motion.div
-      drag
+      drag={!isFullscreen && !isMinimized}
       dragMomentum={false}
+      dragHandleClassName="drag-handle"
       onClick={onClick}
-      dragConstraints={{ left: 0, right: 1000, top: -100, bottom: 1000 }}
-      className="absolute shadow-xl"
-      style={{ top: defaultPosition.y, left: defaultPosition.x, zIndex }}
+      className={clsx(
+        isFullscreen ? "fixed inset-0 z-[10000] pointer-events-auto" : "absolute shadow-xl pointer-events-auto",
+        isMinimized && "hidden"
+      )}
+      style={isFullscreen ? {} : { top: defaultPosition.y, left: defaultPosition.x, zIndex }}
     >
       {children}
     </motion.div>
