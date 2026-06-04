@@ -12,11 +12,13 @@ export default function RustDemo() {
 
   useEffect(() => {
     // Dynamically import the WASM module
+    /*
     import("../wasm-lib/pkg").then((module) => {
       module.default().then(() => {
         setWasm(module);
       });
     });
+    */
   }, []);
 
   const handleGreet = () => {

@@ -17,7 +17,7 @@ import Image from "next/image";
 
 import contactFiles from "@/data/contact";
 import { themes, ThemeKey } from "@/data/themes";
-import RustDemo from "./RustDemo";
+// import RustDemo from "./RustDemo";
 
 type WindowInstance = {
   id: string;
@@ -182,12 +182,6 @@ export default function MainDesktop() {
       cat: "explorer",
     },
     {
-      id: "rust",
-      title: "Rust WASM",
-      icon: "/assets/icons/bash.png",
-      cat: "rust",
-    },
-    {
       id: "batman",
       title: "batsy",
       icon: "/assets/icons/batman.png",
@@ -263,7 +257,8 @@ export default function MainDesktop() {
         );
 
       case "rust":
-        return <RustDemo />;
+        return <div>Rust Demo disabled for production build.</div>;
+        // return <RustDemo />;
 
       default:
         return null;

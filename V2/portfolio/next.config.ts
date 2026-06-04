@@ -6,10 +6,10 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   webpack: (config) => {
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-    };
+    // config.experiments = {
+    //   ...config.experiments,
+    //   asyncWebAssembly: true,
+    // };
     return config;
   },
 };
