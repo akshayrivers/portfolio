@@ -110,8 +110,7 @@ export default function ExplorerView({
   const currentNode = getNodeByPath(currentViewPath, currentViewPath);
   const files = useMemo(() => {
     if (currentNode?.type === "dir" && currentNode.children) {
-        return Object.entries(currentNode.children).map(([name, node]) => ({
-            name,
+        return Object.entries(currentNode.children).map(([_, node]) => ({
             ...node
         }));
     }
