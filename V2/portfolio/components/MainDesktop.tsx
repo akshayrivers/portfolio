@@ -8,6 +8,8 @@ import Dock from "./Dock";
 import AudioPlayer from "./AudioPlayer";
 import FloatingIcon from "./FloatingIcons";
 import ExplorerView from "./ExploreView";
+import PhoneScreen from "./mobile/PhoneScreen";
+import PhoneProfileSelect from "./mobile/PhoneProfileSelect";
 import catFiles from "@/data/cat";
 import aboutFiles from "@/data/about";
 import ideaFiles from "@/data/ideas";
@@ -28,6 +30,7 @@ type WindowInstance = {
 
 export default function MainDesktop() {
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<ThemeKey | null>(null);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -201,61 +204,40 @@ export default function MainDesktop() {
 
   return (
     <div className="relative w-screen h-screen bg-black text-white font-mono overflow-hidden">
+      {isMobile ? (
+        !selectedProfile ? (
+          <PhoneProfileSelect onSelect={(profile) => setSelectedProfile(profile)} />
+        ) : (
+          <PhoneScreen profile={selectedProfile} onSwitchProfile={(profile) => setSelectedProfile(profile)} />
+        )
+      ) : (
+      <div className="relative w-screen h-screen bg-black text-white font-mono overflow-hidden">
       <video
         autoPlay loop muted playsInline preload="auto"
         src={themes[currentTheme].video}
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
-      {isMobile ? (
-        <div className="absolute top-2 left-2 z-20 flex gap-1 bg-black/80 p-1 rounded backdrop-blur-sm max-w-[70vw]">
-          {Object.keys(themes).map((theme) => (
-            <button
-              key={theme}
-              onClick={(e) => { e.stopPropagation(); setCurrentTheme(theme as ThemeKey); localStorage.setItem("theme", theme); }}
-              className="text-[10px] px-2 py-0.5 bg-white/15 hover:bg-white/25 rounded whitespace-nowrap flex-shrink-0 cursor-pointer"
-            >
-              {theme}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <div className="absolute top-4 right-4 z-20 flex gap-2 bg-black/50 p-2 rounded backdrop-blur-sm">
-          {Object.keys(themes).map((theme) => (
-            <button
-              key={theme}
-              onClick={(e) => { e.stopPropagation(); setCurrentTheme(theme as ThemeKey); localStorage.setItem("theme", theme); }}
-              className="text-xs px-2 py-1 bg-white/15 hover:bg-white/25 rounded cursor-pointer"
-            >
-              {theme}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="absolute top-4 right-4 z-20 flex gap-2 bg-black/50 p-2 rounded backdrop-blur-sm">
+        {Object.keys(themes).map((theme) => (
+          <button
+            key={theme}
+            onClick={(e) => { e.stopPropagation(); setCurrentTheme(theme as ThemeKey); localStorage.setItem("theme", theme); }}
+            className="text-xs px-2 py-1 bg-white/15 hover:bg-white/25 rounded cursor-pointer"
+          >
+            {theme}
+          </button>
+        ))}
+      </div>
 
       {/* Desktop Icons */}
-      {isMobile ? (
-        <div className="absolute bottom-24 left-0 right-0 z-10 grid grid-cols-5 gap-0 p-2 bg-black/30 backdrop-blur-sm">
-          {icons.map(({ id, title, icon, cat }) => (
-            <button
-              key={id}
-              onClick={() => openNewWindow(id, cat)}
-              className="flex flex-col items-center justify-center p-1 hover:bg-white/10 rounded-lg touch-manipulation"
-            >
-              <img src={icon} alt={title} className="w-10 h-10 mb-1" />
-              <span className="text-[9px] text-center text-white/80 truncate w-full">{title}</span>
-            </button>
-          ))}
-        </div>
-      ) : (
-        icons.map(({ id, title, icon, cat }) => (
-          <FloatingIcon
-            key={id} icon={icon} title={title}
-            defaultPosition={iconPositions[id] || { x: 0, y: 0 }}
-            onDoubleClick={() => openNewWindow(id, cat)}
-            onDragEnd={(newPos) => setIconPositions((prev) => ({ ...prev, [id]: newPos }))}
-          />
-        ))
-      )}
+      {icons.map(({ id, title, icon, cat }) => (
+        <FloatingIcon
+          key={id} icon={icon} title={title}
+          defaultPosition={iconPositions[id] || { x: 0, y: 0 }}
+          onDoubleClick={() => openNewWindow(id, cat)}
+          onDragEnd={(newPos) => setIconPositions((prev) => ({ ...prev, [id]: newPos }))}
+        />
+      ))}
 
       {/* Floating Windows */}
       {openWindows.map((w) => (
@@ -288,6 +270,8 @@ export default function MainDesktop() {
         restoreWindow={restoreWindow}
         closeAllInCategory={closeAllInCategory}
       />
+      </div>
+      )}
     </div>
   );
 }

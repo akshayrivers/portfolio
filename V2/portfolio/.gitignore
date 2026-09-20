@@ -42,3 +42,6 @@ next-env.d.ts
 wasm-lib/target/
 wasm-lib/
 wasm-lib/target/.rustc_info.json
+
+.env.local
+node_modules
