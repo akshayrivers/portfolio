@@ -23,6 +23,7 @@ export default function HudFrame({
   const router = useRouter();
 
   const isFullscreen = mode === "fullscreen";
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   const handleExitFullscreen = () => {
     if (onClose) onClose();
@@ -33,45 +34,46 @@ export default function HudFrame({
       className={
         isFullscreen
           ? "fixed inset-0 w-screen h-screen flex flex-col bg-black text-green-400 z-[10000]"
-          : "w-[800px] max-w-[95vw] h-[600px] max-h-[80vh] flex flex-col bg-[#1e1e1e] border border-neutral-700 rounded-md shadow-2xl text-sm font-mono overflow-hidden"
+          : `flex flex-col bg-[#1e1e1e] border border-neutral-700 rounded-md shadow-2xl text-sm font-mono overflow-hidden
+             ${isMobile ? "w-[98vw] max-w-full h-[65vh]" : "w-[95vw] max-w-[800px] h-[75vh] md:h-[80vh] max-h-[85vh]"}`
       }
     >
-      {/* Title Bar */}
       <div
-        className={`drag-handle flex items-center justify-between px-3 py-1 cursor-move select-none ${
+        className={`flex items-center justify-between px-3 py-1 cursor-move select-none ${
           isFullscreen ? "bg-zinc-800" : "bg-[#2d2d2d]"
         } text-neutral-300`}
       >
-        <div className="ml-3 font-semibold tracking-wide uppercase text-xs opacity-70">{title}</div>
-        <div className="flex items-center gap-3">
+        <div className="ml-3 font-semibold tracking-wide uppercase text-xs opacity-70 truncate max-w-[55%]">
+          {title}
+        </div>
+        <div className="flex items-center gap-1 md:gap-2">
           {onMinimize && (
             <button
-              onClick={onMinimize}
-              className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors shadow-inner"
+              onClick={(e) => { e.stopPropagation(); onMinimize(); }}
+              className="w-4 h-4 md:w-3 md:h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors shadow-inner flex-shrink-0"
               title="Minimize"
             />
           )}
           {onFullscreen && (
             <button
-              onClick={onFullscreen}
-              className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors shadow-inner"
+              onClick={(e) => { e.stopPropagation(); onFullscreen(); }}
+              className="w-4 h-4 md:w-3 md:h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors shadow-inner flex-shrink-0"
               title={isFullscreen ? "Restore" : "Maximize"}
             />
           )}
           {onClose && (
             <button
-              onClick={onClose}
-              className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow-inner"
+              onClick={(e) => { e.stopPropagation(); onClose(); }}
+              className="w-4 h-4 md:w-3 md:h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow-inner flex-shrink-0"
               title="Close"
             />
           )}
         </div>
       </div>
 
-      {/* Body */}
       <div
         className={`flex-1 overflow-auto ${
-          isFullscreen ? "p-6" : "bg-[#0f0f0f] text-green-400"
+          isFullscreen ? "p-4 md:p-6" : "bg-[#0f0f0f] text-green-400"
         }`}
       >
         {children}

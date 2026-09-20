@@ -13,11 +13,8 @@ import aboutFiles from "@/data/about";
 import ideaFiles from "@/data/ideas";
 import memoriesFiles from "@/data/memories";
 import projectFiles from "@/data/projects";
-import Image from "next/image";
-
 import contactFiles from "@/data/contact";
 import { themes, ThemeKey } from "@/data/themes";
-// import RustDemo from "./RustDemo";
 
 type WindowInstance = {
   id: string;
@@ -30,31 +27,40 @@ type WindowInstance = {
 };
 
 export default function MainDesktop() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
   const [openWindows, setOpenWindows] = useState<WindowInstance[]>([]);
   const [zIndices, setZIndices] = useState<Record<string, number>>({});
   const [highestZ, setHighestZ] = useState(1);
   const [nextOffset, setNextOffset] = useState({ x: 100, y: 100 });
 
-  const [iconPositions, setIconPositions] = useState<
-    Record<string, { x: number; y: number }>
-  >({
-    terminal: { x: 20, y: 20 },
-    about: { x: 20, y: 100 },
-    projects: { x: 20, y: 180 },
-    writings: { x: 20, y: 260 },
-    memories: { x: 20, y: 340 },
-    resume: { x: 20, y: 420 },
-    bin: { x: 20, y: 500 },
-    contact: { x: 20, y: 600 },
-    batman: {
-      x: typeof window !== "undefined" ? window.innerWidth - 40 : 0,
-      y: 580,
-    },
-    schrodinger: {
-      x: typeof window !== "undefined" ? window.innerWidth - 40 : 0,
-      y: 460,
-    },
-  });
+  const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>({});
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIconPositions({
+        terminal: { x: 20, y: 20 },
+        about: { x: 20, y: 100 },
+        projects: { x: 20, y: 180 },
+        writings: { x: 20, y: 260 },
+        memories: { x: 20, y: 340 },
+        resume: { x: 20, y: 420 },
+        bin: { x: 20, y: 500 },
+        contact: { x: 20, y: 600 },
+        batman: { x: typeof window !== "undefined" ? window.innerWidth - 40 : 0, y: 580 },
+        schrodinger: { x: typeof window !== "undefined" ? window.innerWidth - 40 : 0, y: 460 },
+      });
+    } else {
+      setIconPositions({});
+    }
+  }, [isMobile]);
 
   const bringToFront = (id: string) => {
     const newZ = highestZ + 1;
@@ -67,46 +73,48 @@ export default function MainDesktop() {
   };
 
   const openNewWindow = (type: string, cat: string, command?: string) => {
-    const STEP = 30;
-    const MAX_OFFSET = 240;
-
-    if (type === "explorer") {
-      const existing = openWindows.find((w) => w.type === cat);
-      if (existing) return;
-
-      const id = `${cat}-${crypto.randomUUID()}`;
+    if (isMobile) {
+      if (type === "explorer") {
+        const existing = openWindows.find((w) => w.type === cat);
+        if (existing) return;
+      }
+      const id = `${type}-${crypto.randomUUID()}`;
       const newWindow: WindowInstance = {
-        id,
-        type: cat,
-        cat: "explorer",
-        minimized: false,
-        fullscreen: false,
-        position: nextOffset,
+        id, type, cat,
+        minimized: false, fullscreen: false,
+        position: { x: 50, y: Math.min(openWindows.length * 60 + 50, window.innerHeight - 300) },
         ...(command && { command }),
       };
       setOpenWindows((prev) => [...prev, newWindow]);
       setZIndices((prev) => ({ ...prev, [id]: highestZ + 1 }));
       setHighestZ((prev) => prev + 1);
     } else {
+      const STEP = 30;
+      const MAX_OFFSET = 240;
+      if (type === "explorer") {
+        const existing = openWindows.find((w) => w.type === cat);
+        if (existing) return;
+      }
       const id = `${type}-${crypto.randomUUID()}`;
       const newWindow: WindowInstance = {
-        id,
-        type,
-        cat,
-        minimized: false,
-        fullscreen: false,
-        position: nextOffset,
-        ...(command && { command }),
+        id, type, cat,
+        minimized: false, fullscreen: false,
+        position: nextOffset, ...(command && { command }),
       };
       setOpenWindows((prev) => [...prev, newWindow]);
       setZIndices((prev) => ({ ...prev, [id]: highestZ + 1 }));
       setHighestZ((prev) => prev + 1);
+      setNextOffset((prev) => ({
+        x: 100 + ((prev.x - 100 + STEP) % MAX_OFFSET),
+        y: 100 + ((prev.y - 100 + STEP) % MAX_OFFSET),
+      }));
     }
+  };
 
-    setNextOffset((prev) => ({
-      x: 100 + ((prev.x - 100 + STEP) % MAX_OFFSET),
-      y: 100 + ((prev.y - 100 + STEP) % MAX_OFFSET),
-    }));
+  const updateWindowPosition = (id: string, newPos: { x: number; y: number }) => {
+    setOpenWindows((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, position: newPos } : w))
+    );
   };
 
   const closeWindow = (id: string) => {
@@ -133,212 +141,145 @@ export default function MainDesktop() {
   };
 
   const icons = [
-    {
-      id: "terminal",
-      title: "Terminal",
-      icon: "/assets/icons/term.png",
-      cat: "terminal",
-    },
-    {
-      id: "about",
-      title: "About Me",
-      icon: "/assets/icons/soda.png",
-      cat: "explorer",
-    },
-    {
-      id: "projects",
-      title: "Projects",
-      icon: "/assets/icons/folder2.png",
-      cat: "explorer",
-    },
-    {
-      id: "writings",
-      title: "Writings",
-      icon: "/assets/icons/writer.png",
-      cat: "explorer",
-    },
-    {
-      id: "memories",
-      title: "Memories",
-      icon: "/assets/icons/memories.png",
-      cat: "explorer",
-    },
-    {
-      id: "resume",
-      title: "Resume.pdf",
-      icon: "/assets/icons/resume1.png",
-      cat: "resume",
-    },
-    {
-      id: "bin",
-      title: "Recycle Bin",
-      icon: "/assets/icons/cat.png",
-      cat: "bin",
-    },
-    {
-      id: "contact",
-      title: "Contact Me",
-      icon: "/assets/icons/message.png",
-      cat: "explorer",
-    },
-    {
-      id: "batman",
-      title: "batsy",
-      icon: "/assets/icons/batman.png",
-      cat: "bin",
-    },
-    {
-      id: "schrodinger",
-      title: "If I exist or not",
-      icon: "/assets/icons/catman.png",
-      cat: "explorer",
-    },
+    { id: "terminal", title: "Terminal", icon: "/assets/icons/term.png", cat: "terminal" },
+    { id: "about", title: "About Me", icon: "/assets/icons/soda.png", cat: "explorer" },
+    { id: "projects", title: "Projects", icon: "/assets/icons/folder2.png", cat: "explorer" },
+    { id: "writings", title: "Writings", icon: "/assets/icons/writer.png", cat: "explorer" },
+    { id: "memories", title: "Memories", icon: "/assets/icons/memories.png", cat: "explorer" },
+    { id: "resume", title: "Resume.pdf", icon: "/assets/icons/resume1.png", cat: "resume" },
+    { id: "bin", title: "Recycle Bin", icon: "/assets/icons/cat.png", cat: "bin" },
+    { id: "contact", title: "Contact Me", icon: "/assets/icons/message.png", cat: "explorer" },
+    { id: "batman", title: "batsy", icon: "/assets/icons/batman.png", cat: "bin" },
+    { id: "schrodinger", title: "If I exist or not", icon: "/assets/icons/catman.png", cat: "explorer" },
   ];
 
   const renderWindowContent = (type: string, command?: string) => {
     switch (type) {
-      case "terminal":
-        return <TerminalUI initialCommand={command} />;
-      case "about":
-        return <ExplorerView title="About Me" path="/home/vinod/about" />;
-      case "projects":
-        return <ExplorerView title="Projects" path="/home/vinod/projects" />;
-      case "writings":
-        return <ExplorerView title="Writings" path="/home/vinod/ideas" />;
-      case "memories":
-        return <ExplorerView title="Memories" path="/home/vinod/memories" />;
-      case "resume":
-        return (
-          <iframe src="/RESUME_VINOD_AKSHAT.pdf" className="w-full h-[90vh]" />
-        );
-      case "explorer":
-        return <ExplorerView title="Explorer" path="/home/vinod" />;
-
-      case "bin":
-        return <ExplorerView title="Recycle Bin" path="/home/vinod/ideas" />;
+      case "terminal": return <TerminalUI initialCommand={command} />;
+      case "about": return <ExplorerView title="About Me" path="/home/vinod/about" />;
+      case "projects": return <ExplorerView title="Projects" path="/home/vinod/projects" />;
+      case "writings": return <ExplorerView title="Writings" path="/home/vinod/ideas" />;
+      case "memories": return <ExplorerView title="Memories" path="/home/vinod/memories" />;
+      case "resume": return <iframe src="/RESUME_VINOD_AKSHAT.pdf" className="w-full h-[90vh]" />;
+      case "explorer": return <ExplorerView title="Explorer" path="/home/vinod" />;
+      case "bin": return <ExplorerView title="Recycle Bin" path="/home/vinod/ideas" />;
       case "contact":
         return (
-          <ExplorerView
-            title="Contact Me"
-            path="/home/vinod/contact"
-            onTriggerCommand={(cmd) => {
-              if (cmd) {
-                openNewWindow("terminal", "terminal", cmd);
-              }
-            }}
-          />
+          <ExplorerView title="Contact Me" path="/home/vinod/contact"
+            onTriggerCommand={(cmd) => { if (cmd) openNewWindow("terminal", "terminal", cmd); }} />
         );
       case "batman":
         return (
           <>
             Grief doesn't go away. You just learn to live with it.
-            <br />
-            But you're not alone in the dark — reach out:
+            <br />But you're not alone in the dark — reach out:
             <ul className="list-disc list-inside mt-2">
-              <li>
-                <strong>iCall:</strong> 9152987821
-              </li>
-              <li>
-                <strong>AASRA:</strong> 91-9820466726
-              </li>
-              <li>
-                <strong>Vandrevala Foundation:</strong> 1860 266 2345
-              </li>
+              <li><strong>iCall:</strong> 9152987821</li>
+              <li><strong>AASRA:</strong> 91-9820466726</li>
+              <li><strong>Vandrevala Foundation:</strong> 1860 266 2345</li>
             </ul>
-            <p className="mt-2">
-              Be the hero of your own story. Start by asking for help.
-            </p>
+            <p className="mt-2">Be the hero of your own story. Start by asking for help.</p>
           </>
         );
-
       case "schrodinger":
-        return (
-          <ExplorerView title="cat in the bag" path="/home/vinod/secret"></ExplorerView>
-        );
-
+        return <ExplorerView title="cat in the bag" path="/home/vinod/secret" />;
       case "rust":
         return <div>Rust Demo disabled for production build.</div>;
-        // return <RustDemo />;
-
       default:
         return null;
     }
   };
-  const [currentTheme, setCurrentTheme] =
-    useState<ThemeKey>("spiderman");
+
+  const [currentTheme, setCurrentTheme] = useState<ThemeKey>("spiderman");
   const currentWallpaper = themes[currentTheme].video;
   const currentMusic = themes[currentTheme].music;
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    if (saved && saved in themes) {
-      setCurrentTheme(saved as ThemeKey);
-    }
+    if (saved && saved in themes) setCurrentTheme(saved as ThemeKey);
   }, []);
+
   return (
-    <div className="relative w-screen h-screen bg-black bg-cover text-white font-mono overflow-hidden">
+    <div className="relative w-screen h-screen bg-black text-white font-mono overflow-hidden">
       <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
+        autoPlay loop muted playsInline preload="auto"
         src={themes[currentTheme].video}
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
       />
-      <div className="absolute top-4 right-4 z-10 flex gap-2 bg-black/40 p-2 rounded">
-        {Object.keys(themes).map((theme) => (
-          <button
-            key={theme}
-            onClick={() => {
-              const newTheme = theme as ThemeKey;
-              setCurrentTheme(newTheme);
-              localStorage.setItem("theme", newTheme);
-            }}
-            className="text-xs px-2 py-1 bg-white/10 hover:bg-white/20 rounded"
-          >
-            {theme}
-          </button>
-        ))}
-      </div>
-      {/* Desktop Icons */}
-      {icons.map(({ id, title, icon, cat }) => (
-        <FloatingIcon
-          key={id}
-          icon={icon}
-          title={title}
-          defaultPosition={iconPositions[id] || { x: 0, y: 0 }}
-          onDoubleClick={() => openNewWindow(id, cat)}
-          onDragEnd={(newPos) =>
-            setIconPositions((prev) => ({
-              ...prev,
-              [id]: newPos,
-            }))
-          }
-        />
-      ))}
-      {/* Floating Windows */}
-      {openWindows
-        .map((w) => (
-          <FloatingWindow
-            key={w.id}
-            defaultPosition={w.position}
-            zIndex={zIndices[w.id] || 1}
-            onClick={() => bringToFront(w.id)}
-            isFullscreen={w.fullscreen}
-            isMinimized={w.minimized}
-          >
-            <HudFrame
-              title={w.type.toUpperCase()}
-              mode={w.fullscreen ? "fullscreen" : "window"}
-              onClose={() => closeWindow(w.id)}
-              onMinimize={() => minimizeWindow(w.id)}
-              onFullscreen={() => toggleFullscreen(w.id)}
+      {isMobile ? (
+        <div className="absolute top-2 left-2 z-20 flex gap-1 bg-black/80 p-1 rounded backdrop-blur-sm max-w-[70vw]">
+          {Object.keys(themes).map((theme) => (
+            <button
+              key={theme}
+              onClick={(e) => { e.stopPropagation(); setCurrentTheme(theme as ThemeKey); localStorage.setItem("theme", theme); }}
+              className="text-[10px] px-2 py-0.5 bg-white/15 hover:bg-white/25 rounded whitespace-nowrap flex-shrink-0 cursor-pointer"
             >
-              {renderWindowContent(w.type, w.command)}
-            </HudFrame>
-          </FloatingWindow>
-        ))}
+              {theme}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="absolute top-4 right-4 z-20 flex gap-2 bg-black/50 p-2 rounded backdrop-blur-sm">
+          {Object.keys(themes).map((theme) => (
+            <button
+              key={theme}
+              onClick={(e) => { e.stopPropagation(); setCurrentTheme(theme as ThemeKey); localStorage.setItem("theme", theme); }}
+              className="text-xs px-2 py-1 bg-white/15 hover:bg-white/25 rounded cursor-pointer"
+            >
+              {theme}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Desktop Icons */}
+      {isMobile ? (
+        <div className="absolute bottom-24 left-0 right-0 z-10 grid grid-cols-5 gap-0 p-2 bg-black/30 backdrop-blur-sm">
+          {icons.map(({ id, title, icon, cat }) => (
+            <button
+              key={id}
+              onClick={() => openNewWindow(id, cat)}
+              className="flex flex-col items-center justify-center p-1 hover:bg-white/10 rounded-lg touch-manipulation"
+            >
+              <img src={icon} alt={title} className="w-10 h-10 mb-1" />
+              <span className="text-[9px] text-center text-white/80 truncate w-full">{title}</span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        icons.map(({ id, title, icon, cat }) => (
+          <FloatingIcon
+            key={id} icon={icon} title={title}
+            defaultPosition={iconPositions[id] || { x: 0, y: 0 }}
+            onDoubleClick={() => openNewWindow(id, cat)}
+            onDragEnd={(newPos) => setIconPositions((prev) => ({ ...prev, [id]: newPos }))}
+          />
+        ))
+      )}
+
+      {/* Floating Windows */}
+      {openWindows.map((w) => (
+        <FloatingWindow
+          key={w.id}
+          defaultPosition={w.position}
+          zIndex={zIndices[w.id] || 1}
+          onClick={() => bringToFront(w.id)}
+          onDragEnd={(pos) => updateWindowPosition(w.id, pos)}
+          isFullscreen={w.fullscreen}
+          isMinimized={w.minimized}
+        >
+          <HudFrame
+            title={w.type.toUpperCase()}
+            mode={w.fullscreen ? "fullscreen" : "window"}
+            onClose={() => closeWindow(w.id)}
+            onMinimize={() => minimizeWindow(w.id)}
+            onFullscreen={() => toggleFullscreen(w.id)}
+          >
+            {renderWindowContent(w.type, w.command)}
+          </HudFrame>
+        </FloatingWindow>
+      ))}
+
       {/* Dock */}
       <AudioPlayer src={currentMusic} />
       <Dock

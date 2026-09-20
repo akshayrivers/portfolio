@@ -1,9 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=UnifrakturMaguntia&display=swap");
-@import "@scribe-sdk/styles/tailwind.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
   @apply bg-bgDark text-neon font-mono;
 }
@@ -23,7 +21,6 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @font-face {
@@ -40,6 +37,10 @@ body {
   src: url("/fonts/CT2.otf") format("truetype");
 }
 
+.custom-font1 {
+  font-family: "CustomFont1", sans-serif;
+}
+
 .btn {
   background-color: rgb(15, 5, 5);
   color: #008842;
@@ -51,10 +52,6 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.custom-font1 {
-  font-family: "CustomFont1", sans-serif;
-}
-
 .sigmar-regular {
   font-family: "Sigmar", serif;
   font-weight: 400;
@@ -62,13 +59,53 @@ body {
 }
 
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .animate-fade-in {
   animation: fade-in 0.5s ease-in-out forwards;
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 768px) {
+  .desktop-icon {
+    width: 56px !important;
+    height: 64px !important;
+  }
+  .desktop-icon span {
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .desktop-icon {
+    width: 48px !important;
+    height: 56px !important;
+  }
+  .desktop-icon span {
+    font-size: 9px !important;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Touch-friendly hit targets */
+@media (hover: none) {
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

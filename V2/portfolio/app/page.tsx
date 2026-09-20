@@ -2,62 +2,42 @@
 
 import { useState, useEffect } from "react";
 import MainDesktop from "../components/MainDesktop";
-
 import { themes } from "@/data/themes";
 
 export default function Home() {
-  const [started, setStarted] = useState(false);
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [command, setCommand] = useState("");
-  const [bootComplete, setBootComplete] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [loadingLines, setLoadingLines] = useState<string[]>([]);
-
-  const fullBootLog = [
-    "[ OK ] Initializing Vinod Akshat Virtual Machine...",
-    "[ OK ] Mounting reality layer...",
-    "[ OK ] Loading desktop environment...",
-    "[ OK ] Preparing terminal interface...",
-    "Boot complete.",
-    "Type `startx` to begin.",
-  ];
-
-  const resourceLoadingLog = [
-    "[ OK ] Fetching fonts...",
-    "[ OK ] Loading wallpaper videos...",
-    "[ OK ] Bootstrapping desktop environment...",
-    "Launching interface...",
-  ];
+  const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadLines, setLoadLines] = useState<string[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const alreadyBooted = localStorage.getItem("hasBooted");
+    setIsMobile(window.innerWidth < 768);
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  useEffect(() => {
     const videoAlreadyCached = localStorage.getItem("videoLoaded") === "true";
+    const alreadyBooted = localStorage.getItem("hasBooted");
 
     if (alreadyBooted === "true" && videoAlreadyCached) {
-      // Skip loading animation if video was cached
-      setLoading(true);
-      setTimeout(() => {
-        setStarted(true);
-      }, 1000);
-    } else if (alreadyBooted === "true") {
-      preloadResources();
+      setTimeout(() => setReady(true), 600);
     } else {
-      let i = 0;
-      const interval = setInterval(() => {
-        setBootLines((prev) => [...prev, fullBootLog[i]]);
-        i++;
-        if (i >= fullBootLog.length) {
-          clearInterval(interval);
-          setBootComplete(true);
-        }
-      }, 500);
-      return () => clearInterval(interval);
+      preloadResources();
     }
   }, []);
 
   const preloadResources = () => {
     setLoading(true);
     let i = 0;
+
+    const resourceLines = [
+      "[ OK ] Connecting to portfolio...",
+      "[ OK ] Loading assets...",
+      "[ OK ] Initializing experience...",
+      "Welcome.",
+    ];
 
     const videoUrls = Object.values(themes).map((t) => t.video);
     let loadedCount = 0;
@@ -75,70 +55,42 @@ export default function Home() {
     });
 
     const interval = setInterval(() => {
-      setLoadingLines((prev) => [...prev, resourceLoadingLog[i]]);
+      setLoadLines((prev) => [...prev, resourceLines[i]]);
       i++;
 
-      if (i >= resourceLoadingLog.length) {
+      if (i >= resourceLines.length) {
         clearInterval(interval);
-
-        // Wait for videos to load or timeout after 10s max
-        const start = Date.now();
-        const checkInterval = setInterval(() => {
-          const timeout = Date.now() - start > 10000;
-          if (loadedCount === videoUrls.length || timeout) {
-            clearInterval(checkInterval);
-            setTimeout(() => setStarted(true), 1000);
-          }
-        }, 100);
+        setTimeout(() => {
+          localStorage.setItem("hasBooted", "true");
+          setReady(true);
+        }, 600);
       }
-    }, 600);
+    }, 400);
   };
 
-  const handleCommand = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && command.trim().toLowerCase() === "startx") {
-      localStorage.setItem("hasBooted", "true");
-      preloadResources();
-    }
-  };
-
-  if (started) return <MainDesktop />;
+  if (ready) return <MainDesktop />;
 
   if (loading) {
     return (
-      <div className="flex h-screen w-full bg-black text-green-400 font-mono p-6 items-center justify-center">
+      <div
+        className={`flex h-screen w-full bg-bgDark items-center justify-center p-4 ${
+          isMobile ? "font-mono text-sm" : "font-mono"
+        }`}
+      >
         <div className="w-full max-w-2xl">
-          {loadingLines.map((line, index) => (
+          {loadLines.map((line, index) => (
             <p key={index} className="mb-1 whitespace-pre-wrap">
               {line}
             </p>
           ))}
+          <div className="flex items-center gap-2 mt-4 animate-fade-in">
+            <span className="animate-pulse">$</span>
+            <span className="text-green-400">Loading Vinod Akshat...</span>
+          </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="flex h-screen w-full bg-black text-green-400 font-mono p-6 items-center justify-center">
-      <div className="w-full max-w-2xl">
-        {bootLines.map((line, index) => (
-          <p key={index} className="mb-1 whitespace-pre-wrap">
-            {line}
-          </p>
-        ))}
-        {bootComplete && (
-          <div className="flex items-center gap-2 mt-4 animate-fade-in">
-            <span className="animate-pulse">$</span>
-            <input
-              type="text"
-              value={command}
-              onChange={(e) => setCommand(e.target.value)}
-              onKeyDown={handleCommand}
-              className="bg-transparent border-none outline-none text-green-400 w-full"
-              autoFocus
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return null;
 }

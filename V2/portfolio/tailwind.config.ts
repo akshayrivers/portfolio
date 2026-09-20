@@ -14,7 +14,16 @@ const config: Config = {
         glitchPink: "#ff007c",
       },
       fontFamily: {
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ["var(--font-geist-sans)", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
+      },
+      screens: {
+        xs: "480px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
       },
       keyframes: {
         shake: {
@@ -52,7 +61,6 @@ const config: Config = {
       },
     },
   },
-  // Safelist any utility classes you plan to toggle dynamically in JS (optional but helpful)
   safelist: [
     "animate-shake",
     "animate-glitch-h",

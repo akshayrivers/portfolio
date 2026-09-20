@@ -53,18 +53,17 @@ export default function Dock({
   function handleMouseLeave(cat: string) {
     leaveTimeoutRef.current = setTimeout(() => {
       setHoveredCat((prev) => (prev === cat ? null : prev));
-    }, 170); // 170ms grace, tune as desired
+    }, 200);
   }
 
   return (
-    <div className="absolute bg-opacity-55 bottom-4 left-1/2 -translate-x-1/2 bg-[#1e1e1e] border border-neutral-700 rounded-xl px-6 py-3 flex gap-6 shadow-2xl z-50">
+    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#1e1e1e]/90 border border-neutral-700 rounded-xl px-3 py-2 flex gap-3 shadow-2xl z-50">
       {allCategories.map((cat) => {
         const windows = windowsByCat(cat);
         return (
           <div
             key={cat}
-            className="relative flex flex-col items-center"
-            // Use events with grace period
+            className="relative flex flex-col items-center flex-shrink-0"
             onMouseEnter={() => handleMouseEnter(cat)}
             onMouseLeave={() => handleMouseLeave(cat)}
           >
@@ -75,9 +74,9 @@ export default function Dock({
               <img
                 src={ICONS[cat]}
                 alt={cat}
-                width={32}
-                height={32}
-                className="mb-1"
+                width={24}
+                height={24}
+                className="md:w-8 md:h-8"
                 draggable={false}
               />
               {windows.length > 0 && (
@@ -87,12 +86,10 @@ export default function Dock({
               )}
             </button>
 
-            {/* Popup area, always within parent div (no gap) */}
             {hoveredCat === cat && windows.length > 0 && (
               <div
-                className="absolute left-1/2 -translate-x-1/2 bottom-14 min-w-[190px] bg-black border border-neutral-600 rounded-md px-3 py-2 text-sm text-yellow-300 whitespace-nowrap z-50 shadow-xl"
-                // Graceful mouse events
-                onMouseEnter={() => handleMouseEnter(cat)}
+                className="absolute left-1/2 -translate-x-1/2 bottom-14 min-w-[180px] bg-black border border-neutral-600 rounded-md px-3 py-2 text-sm text-yellow-300 whitespace-nowrap z-50 shadow-xl"
+                onMouseEnter={() => { if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current); }}
                 onMouseLeave={() => handleMouseLeave(cat)}
               >
                 <div className="mb-1 font-bold text-green-400 border-b border-neutral-700 pb-1">
@@ -101,7 +98,8 @@ export default function Dock({
                 {windows.map((w) => (
                   <button
                     key={w.id}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       restoreWindow(w.id);
                       setHoveredCat(null);
                     }}
@@ -116,7 +114,8 @@ export default function Dock({
                 ))}
 
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     closeAllInCategory(cat);
                     setHoveredCat(null);
                   }}

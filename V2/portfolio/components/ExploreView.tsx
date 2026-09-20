@@ -6,15 +6,8 @@ import { useVFS, VFSNode } from "@/hooks/useVFS";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
-  BookOpen,
-  FileText,
-  FileVideo,
-  FileAudio,
-  ImageIcon,
-  FileQuestion,
-  Globe,
-  Terminal,
-  Folder,
+  BookOpen, FileText, FileVideo, FileAudio,
+  ImageIcon, FileQuestion, Globe, Terminal, Folder,
 } from "lucide-react";
 
 type Props = {
@@ -106,6 +99,8 @@ export default function ExplorerView({
   const { getNodeByPath } = useVFS();
   const [currentViewPath, setCurrentViewPath] = useState(path);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   const currentNode = getNodeByPath(currentViewPath, currentViewPath);
   const files = useMemo(() => {
@@ -162,20 +157,32 @@ export default function ExplorerView({
   };
 
   return (
-    <div className="flex h-[90vh] w-full overflow-hidden rounded-lg shadow-lg border border-gray-700 bg-zinc-900">
+    <div className={`flex h-[90vh] w-full overflow-hidden rounded-lg shadow-lg border border-gray-700 bg-zinc-900 ${isMobile ? "flex-col" : ""}`}>
+      {isMobile && (
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="absolute top-2 right-2 z-10 bg-zinc-800 text-green-400 px-2 py-1 rounded text-xs"
+        >
+          {sidebarOpen ? "◀ Hide" : "▶ Files"}
+        </button>
+      )}
       {/* Sidebar */}
-      <div className="w-1/3 max-h-[90vh] overflow-y-auto bg-black bg-opacity-20 p-3 border-r border-gray-700">
-        <div className="flex items-center justify-between mb-3">
+      <div className={`${isMobile ? (sidebarOpen ? "w-full max-h-[40vh] border-b border-gray-700" : "hidden") : "w-1/3 max-h-[90vh] overflow-y-auto bg-black bg-opacity-20 p-3 border-r border-gray-700"}`}>
+        {isMobile ? (
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-green-400 font-bold text-sm">{currentViewPath}</h2>
+            {currentViewPath !== '/' && (
+              <button onClick={handleBack} className="text-xs text-zinc-400 hover:text-white bg-zinc-800 px-2 py-1 rounded">Back</button>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center justify-between mb-3">
             <h2 className="text-green-400 font-bold truncate">{currentViewPath}</h2>
             {currentViewPath !== '/' && (
-                <button 
-                    onClick={handleBack}
-                    className="text-xs text-zinc-400 hover:text-white bg-zinc-800 px-2 py-1 rounded"
-                >
-                    Back
-                </button>
+              <button onClick={handleBack} className="text-xs text-zinc-400 hover:text-white bg-zinc-800 px-2 py-1 rounded">Back</button>
             )}
-        </div>
+          </div>
+        )}
         <ul className="space-y-1 text-sm">
           {files.map((file) => (
             <li

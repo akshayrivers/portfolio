@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import { motion, useMotionValue } from "framer-motion";
-import { useEffect } from "react";
 
 type Props = {
   icon: string;
@@ -18,25 +18,44 @@ export default function FloatingIcon({
   onDoubleClick,
   onDragEnd,
 }: Props) {
-  const x = useMotionValue(defaultPosition.x);
-  const y = useMotionValue(defaultPosition.y);
+  const x = useMotionValue(defaultPosition.x || 0);
+  const y = useMotionValue(defaultPosition.y || 0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    x.set(defaultPosition.x);
-    y.set(defaultPosition.y);
-  }, [defaultPosition.x, defaultPosition.y, x, y]);
+    setIsMobile(window.innerWidth < 768);
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      x.set(0);
+      y.set(0);
+    } else {
+      x.set(defaultPosition.x || 0);
+      y.set(defaultPosition.y || 0);
+    }
+  }, [isMobile, defaultPosition.x, defaultPosition.y, x, y]);
+
+  const handleDragEnd = useCallback(() => {
+    if (!isMobile) onDragEnd({ x: x.get(), y: y.get() });
+  }, [isMobile, x, y, onDragEnd]);
 
   return (
     <motion.div
-      drag
+      drag={!isMobile}
       dragMomentum={false}
       dragElastic={0.2}
-      className="absolute w-20 h-24 flex flex-col items-center justify-center cursor-pointer hover:opacity-80"
-      style={{ x, y }}
+      className={`
+        ${isMobile ? "relative" : "absolute"}
+        w-20 h-24 flex flex-col items-center justify-center cursor-pointer hover:opacity-80
+        ${isMobile ? "w-16 h-20 mx-1 mb-2 flex-shrink-0" : ""}
+      `}
+      style={isMobile ? {} : { x, y }}
       onDoubleClick={onDoubleClick}
-      onDragEnd={() => {
-        onDragEnd({ x: x.get(), y: y.get() });
-      }}
+      onDragEnd={handleDragEnd}
       whileDrag={{
         scale: 1.08,
         zIndex: 2000,
@@ -48,8 +67,18 @@ export default function FloatingIcon({
         damping: 28,
       }}
     >
-      <img src={icon} alt={title} className="w-12 h-12" />
-      <span className="text-sm mt-1 text-center">{title}</span>
+      <img
+        src={icon}
+        alt={title}
+        className={isMobile ? "w-8 h-8" : "w-12 h-12"}
+      />
+      <span
+        className={`${
+          isMobile ? "text-[9px] mt-0" : "text-sm mt-1"
+        } text-center truncate w-full px-1`}
+      >
+        {title}
+      </span>
     </motion.div>
   );
 }

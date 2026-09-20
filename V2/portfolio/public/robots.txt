@@ -1,9 +1,17 @@
-# *
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin/
+Crawl-delay: 1
 
-# Host
-Host: https://vinodakshat.vercel.app/
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Crawl-delay: 1
 
-# Sitemaps
-Sitemap: https://vinodakshat.vercel.app/sitemap.xml
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Crawl-delay: 1
+
+Sitemap: https://vinod-akshat.vercel.app/sitemap.xml

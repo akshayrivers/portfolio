@@ -83,7 +83,7 @@ export default function TerminalUI({ initialCommand }: Props) {
       setPhase("idle");
       appendLines("Sending message...");
       try {
-        const res = await fetch("https://sheetdb.io/api/v1/x3l7fvjpp9ymi", {
+        const res = await fetch(process.env.NEXT_PUBLIC_SHEETDB_API_URL || "https://sheetdb.io/api/v1/x3l7fvjpp9ymi", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ data: finalData }),
@@ -239,7 +239,7 @@ export default function TerminalUI({ initialCommand }: Props) {
   return (
     <div
       className={clsx(
-        "bg-black/95 text-green-500 font-mono p-4 w-full h-full border border-zinc-800 rounded shadow-2xl overflow-hidden flex flex-col transition-all",
+        "bg-black/95 text-green-500 font-mono p-3 md:p-4 w-full h-full border border-zinc-800 rounded shadow-2xl overflow-hidden flex flex-col transition-all text-sm md:text-base",
         triggeredDestruction && "animate-shake"
       )}
       onClick={() => inputRef.current?.focus()}
