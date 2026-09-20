@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
 import PhoneApp from "./PhoneApp";
 import PhoneChat from "./PhoneChat";
 import PhoneProfileSelect from "./PhoneProfileSelect";
 import ProfileDropdown from "./ProfileDropdown";
+import { PhoneMusicProvider, usePhoneMusic } from "./PhoneMusicProvider";
+import PhoneMusicPlayer from "./PhoneMusicPlayer";
 import aboutData from "@/data/about";
 import projectData from "@/data/projects";
 import ideaData from "@/data/ideas";
@@ -13,6 +15,7 @@ import memoriesData from "@/data/memories";
 import contactData from "@/data/contact";
 import { type ThemeKey } from "@/data/themes";
 import { ProfileKey } from "@/data/profiles";
+import { themes } from "@/data/themes";
 
 type App = {
   id: string;
@@ -162,8 +165,9 @@ function ContactPage() {
   );
 }
 
-export default function PhoneScreen() {
+function PhoneScreenInner() {
   const { profile, profileName, switchProfile } = useProfile();
+  const { setTrack, setUserInteracted, userInteracted } = usePhoneMusic();
   const [activeApp, setActiveApp] = useState<string | null>(null);
   const [showProfileSelect, setShowProfileSelect] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -191,8 +195,21 @@ export default function PhoneScreen() {
     }
   };
 
+  const handleProfileSwitch = (newProfile: ThemeKey) => {
+    switchProfile(newProfile);
+    setTrack(newProfile);
+  };
+
+  const handleUserInteraction = () => {
+    if (!userInteracted) setUserInteracted();
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-black text-neon font-mono">
+    <div
+      className="flex flex-col h-screen bg-black text-neon font-mono"
+      onClick={handleUserInteraction}
+      onTouchStart={handleUserInteraction}
+    >
       {showProfileSelect ? (
         <PhoneProfileSelect onSelect={() => setShowProfileSelect(false)} />
       ) : (
@@ -209,7 +226,7 @@ export default function PhoneScreen() {
           </div>
 
           {/* App Grid */}
-          <div className="flex-1 overflow-auto p-4">
+          <div className="flex-1 overflow-auto p-4 pb-8">
             <div className="grid grid-cols-4 gap-4 items-start">
               {APPS.map((app) => (
                 <button
@@ -229,8 +246,18 @@ export default function PhoneScreen() {
                   <span className="text-[10px] text-zinc-400 mt-1">{app.label}</span>
                 </button>
               ))}
+              {/* Music Player Card */}
+              <div className="col-span-4 bg-zinc-800/50 rounded-xl border border-zinc-700 p-3 hover:border-green-500/30 transition">
+                <PhoneMusicPlayer compact />
+              </div>
+              <p className="col-span-4 text-[9px] text-zinc-600 text-center font-mono mt-1">
+                ⚠ Music credits belong to respective artists. Used for portfolio demonstration only.
+              </p>
             </div>
           </div>
+
+          {/* Full-screen fixed music player (when app is open) */}
+          {activeApp && <PhoneMusicPlayer fixed />}
 
           {/* Active App */}
           {activeApp && (
@@ -258,12 +285,20 @@ export default function PhoneScreen() {
           {showDropdown && (
             <ProfileDropdown
               currentProfile={profile}
-              onSwitch={switchProfile}
+              onSwitch={handleProfileSwitch}
               onClose={() => setShowDropdown(false)}
             />
           )}
         </>
       )}
     </div>
+  );
+}
+
+export default function PhoneScreen() {
+  return (
+    <PhoneMusicProvider>
+      <PhoneScreenInner />
+    </PhoneMusicProvider>
   );
 }
