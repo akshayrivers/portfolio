@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import MainDesktop from "../components/MainDesktop";
+import DesktopPipeline from "../components/desktop/DesktopPipeline";
 import { themes } from "@/data/themes";
 
 export default function Home() {
@@ -68,7 +68,7 @@ export default function Home() {
     }, 400);
   };
 
-  if (ready) return <MainDesktop />;
+  if (ready) return <DesktopPipeline />;
 
   if (loading) {
     return (

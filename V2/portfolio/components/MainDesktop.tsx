@@ -1,6 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { useProfile } from "@/hooks/useProfile";
 import FloatingWindow from "./FloatingWindow";
 import HudFrame from "./HudFrame";
 import TerminalUI from "./terminal";
@@ -9,13 +8,6 @@ import AudioPlayer from "./AudioPlayer";
 import FloatingIcon from "./FloatingIcons";
 import ExplorerView from "./ExploreView";
 import PhoneScreen from "./mobile/PhoneScreen";
-import PhoneProfileSelect from "./mobile/PhoneProfileSelect";
-import catFiles from "@/data/cat";
-import aboutFiles from "@/data/about";
-import ideaFiles from "@/data/ideas";
-import memoriesFiles from "@/data/memories";
-import projectFiles from "@/data/projects";
-import contactFiles from "@/data/contact";
 import { themes, ThemeKey } from "@/data/themes";
 
 type WindowInstance = {
@@ -30,7 +22,7 @@ type WindowInstance = {
 
 export default function MainDesktop() {
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<ThemeKey | null>(null);
+  const { profile, loading: profileLoading, switchProfile } = useProfile();
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -205,11 +197,7 @@ export default function MainDesktop() {
   return (
     <div className="relative w-screen h-screen bg-black text-white font-mono overflow-hidden">
       {isMobile ? (
-        !selectedProfile ? (
-          <PhoneProfileSelect onSelect={(profile) => setSelectedProfile(profile)} />
-        ) : (
-          <PhoneScreen profile={selectedProfile} onSwitchProfile={(profile) => setSelectedProfile(profile)} />
-        )
+        <PhoneScreen />
       ) : (
       <div className="relative w-screen h-screen bg-black text-white font-mono overflow-hidden">
       <video

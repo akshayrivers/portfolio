@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useProfile } from "@/hooks/useProfile";
 import PhoneApp from "./PhoneApp";
 import PhoneChat from "./PhoneChat";
+import PhoneProfileSelect from "./PhoneProfileSelect";
+import ProfileDropdown from "./ProfileDropdown";
 import aboutData from "@/data/about";
 import projectData from "@/data/projects";
 import ideaData from "@/data/ideas";
@@ -10,7 +13,6 @@ import memoriesData from "@/data/memories";
 import contactData from "@/data/contact";
 import { type ThemeKey } from "@/data/themes";
 import { ProfileKey } from "@/data/profiles";
-import ProfileDropdown from "./ProfileDropdown";
 
 type App = {
   id: string;
@@ -160,8 +162,10 @@ function ContactPage() {
   );
 }
 
-export default function PhoneScreen({ profile, onSwitchProfile }: { profile: ThemeKey; onSwitchProfile: (profile: ThemeKey) => void }) {
+export default function PhoneScreen() {
+  const { profile, profileName, switchProfile } = useProfile();
   const [activeApp, setActiveApp] = useState<string | null>(null);
+  const [showProfileSelect, setShowProfileSelect] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const profileNames: Record<ProfileKey, string> = {
@@ -175,93 +179,90 @@ export default function PhoneScreen({ profile, onSwitchProfile }: { profile: The
 
   const renderAppContent = (appId: string) => {
     switch (appId) {
-      case "chat":
-        return <PhoneChat />;
-      case "about":
-        return <AboutPage />;
-      case "projects":
-        return <ProjectsPage />;
-      case "writings":
-        return <WritingsPage />;
-      case "memories":
-        return <MemoriesPage />;
-      case "contact":
-        return <ContactPage />;
-      case "camera":
-        return <CameraComingSoon />;
-      case "settings":
-        return <SettingsPage />;
-      default:
-        return null;
+      case "chat": return <PhoneChat />;
+      case "about": return <AboutPage />;
+      case "projects": return <ProjectsPage />;
+      case "writings": return <WritingsPage />;
+      case "memories": return <MemoriesPage />;
+      case "contact": return <ContactPage />;
+      case "camera": return <CameraComingSoon />;
+      case "settings": return <SettingsPage />;
+      default: return null;
     }
   };
 
   return (
     <div className="flex flex-col h-screen bg-black text-neon font-mono">
-      {/* Status Bar */}
-      <div className="flex items-center justify-between px-6 py-2 bg-zinc-900/80 border-b border-zinc-800">
-        <span className="text-xs text-zinc-400">12:45</span>
-        <div className="flex items-center gap-1">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#39FF14">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-          </svg>
-          <span className="text-xs text-zinc-400">100%</span>
-        </div>
-      </div>
+      {showProfileSelect ? (
+        <PhoneProfileSelect onSelect={() => setShowProfileSelect(false)} />
+      ) : (
+        <>
+          {/* Status Bar */}
+          <div className="flex items-center justify-between px-6 py-2 bg-zinc-900/80 border-b border-zinc-800">
+            <span className="text-xs text-zinc-400">12:45</span>
+            <div className="flex items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#39FF14">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+              <span className="text-xs text-zinc-400">100%</span>
+            </div>
+          </div>
 
-      {/* App Grid */}
-      <div className="flex-1 overflow-auto p-4">
-        <div className="grid grid-cols-4 gap-4 items-start">
-          {APPS.map((app) => (
-            <button
-              key={app.id}
-              onClick={() => setActiveApp(app.id)}
-              className="flex flex-col items-center gap-2 p-3 hover:bg-zinc-800/50 rounded-lg transition active:scale-95"
-            >
-              <div className="w-14 h-14 flex items-center justify-center bg-zinc-800 rounded-xl border border-zinc-700">
-                {app.iconSrc ? (
-                  <img src={app.iconSrc} alt={app.label} className="w-10 h-10" />
-                ) : app.id === "camera" ? (
-                  <CameraIcon />
-                ) : (
-                  <SettingsIcon />
-                )}
-              </div>
-              <span className="text-[10px] text-zinc-400 mt-1">{app.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+          {/* App Grid */}
+          <div className="flex-1 overflow-auto p-4">
+            <div className="grid grid-cols-4 gap-4 items-start">
+              {APPS.map((app) => (
+                <button
+                  key={app.id}
+                  onClick={() => setActiveApp(app.id)}
+                  className="flex flex-col items-center gap-2 p-3 hover:bg-zinc-800/50 rounded-lg transition active:scale-95"
+                >
+                  <div className="w-14 h-14 flex items-center justify-center bg-zinc-800 rounded-xl border border-zinc-700">
+                    {app.iconSrc ? (
+                      <img src={app.iconSrc} alt={app.label} className="w-10 h-10" />
+                    ) : app.id === "camera" ? (
+                      <CameraIcon />
+                    ) : (
+                      <SettingsIcon />
+                    )}
+                  </div>
+                  <span className="text-[10px] text-zinc-400 mt-1">{app.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Active App */}
-      {activeApp && (
-        <div className="fixed inset-0 z-50 bg-black animate-fade-in">
-          <PhoneApp
-            title={APPS.find((a) => a.id === activeApp)?.label || ""}
-            onBack={() => setActiveApp(null)}
-            onClose={() => setActiveApp(null)}
+          {/* Active App */}
+          {activeApp && (
+            <div className="fixed inset-0 z-50 bg-black animate-fade-in">
+              <PhoneApp
+                title={APPS.find((a) => a.id === activeApp)?.label || ""}
+                onBack={() => setActiveApp(null)}
+                onClose={() => setActiveApp(null)}
+              >
+                {renderAppContent(activeApp)}
+              </PhoneApp>
+            </div>
+          )}
+
+          {/* Profile Selector */}
+          <button
+            onClick={() => setShowDropdown(true)}
+            className="flex items-center justify-center gap-2 py-2 bg-zinc-900/90 border-t border-zinc-800 hover:bg-zinc-800/90 transition"
           >
-            {renderAppContent(activeApp)}
-          </PhoneApp>
-        </div>
-      )}
+            <span className="text-xs text-green-400">{profileNames[profile]}</span>
+            <span className="text-[10px] text-zinc-500">▼</span>
+          </button>
 
-      {/* Profile Selector */}
-      <button
-        onClick={() => setShowDropdown(true)}
-        className="flex items-center justify-center gap-2 py-2 bg-zinc-900/90 border-t border-zinc-800 hover:bg-zinc-800/90 transition"
-      >
-        <span className="text-xs text-green-400">{profileNames[profile]}</span>
-        <span className="text-[10px] text-zinc-500">▼</span>
-      </button>
-
-      {/* Profile Dropdown */}
-      {showDropdown && (
-        <ProfileDropdown
-          currentProfile={profile}
-          onSwitch={onSwitchProfile}
-          onClose={() => setShowDropdown(false)}
-        />
+          {/* Profile Dropdown */}
+          {showDropdown && (
+            <ProfileDropdown
+              currentProfile={profile}
+              onSwitch={switchProfile}
+              onClose={() => setShowDropdown(false)}
+            />
+          )}
+        </>
       )}
     </div>
   );
