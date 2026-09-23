@@ -18,7 +18,7 @@ export default function PhoneProfileSelect({ onSelect }: Props) {
     const timer = setTimeout(() => {
       setAutoSelected(true);
       onSelect("engineer");
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [onSelect]);
 
@@ -43,7 +43,7 @@ export default function PhoneProfileSelect({ onSelect }: Props) {
             className="text-center py-2"
           >
             <p className="text-xs text-zinc-500">
-              Choosing in <span className="text-green-400">{3}</span> seconds...
+              Choosing in <span className="text-green-400">{5}</span> seconds...
             </p>
           </motion.div>
         )}

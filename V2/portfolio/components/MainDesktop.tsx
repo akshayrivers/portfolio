@@ -56,8 +56,8 @@ export default function MainDesktop() {
         resume: { x: 20, y: 420 },
         bin: { x: 20, y: 500 },
         contact: { x: 20, y: 600 },
-        batman: { x: typeof window !== "undefined" ? window.innerWidth - 40 : 0, y: 580 },
-        schrodinger: { x: typeof window !== "undefined" ? window.innerWidth - 40 : 0, y: 460 },
+        batman: { x: typeof window !== "undefined" ? window.innerWidth - 40 : 0, y: typeof window !== "undefined" ? window.innerHeight / 2 - 50 : 0 },
+        schrodinger: { x: typeof window !== "undefined" ? window.innerWidth - 40 : 0, y: typeof window !== "undefined" ? window.innerHeight / 2 + 40 : 0 },
       });
     } else {
       setIconPositions({});
@@ -199,7 +199,12 @@ export default function MainDesktop() {
 
   const [currentTheme, setCurrentTheme] = useState<ThemeKey>("engineer");
   const currentWallpaper = themes[currentTheme].video;
-  const currentMusic = themes[currentTheme].music;
+  const currentTrack = {
+    src: themes[currentTheme].music,
+    title: themes[currentTheme].musicTitle,
+    artist: themes[currentTheme].musicArtist,
+    art: themes[currentTheme].musicArt,
+  };
 
   // Desktop has one identity: theme buttons drive wallpaper + music AND the
   // active profile (apps, VFS content), exactly like mobile profile switching.
@@ -207,6 +212,13 @@ export default function MainDesktop() {
     setCurrentTheme(theme);
     localStorage.setItem("theme", theme);
     switchProfile(theme);
+  };
+
+  // Music navigation cycles themes, so wallpaper + profile follow the track.
+  const stepTheme = (dir: 1 | -1) => {
+    const order = Object.keys(themes) as ThemeKey[];
+    const next = order[(order.indexOf(currentTheme) + dir + order.length) % order.length];
+    handleThemeSelect(next);
   };
 
   useEffect(() => {
@@ -275,7 +287,11 @@ export default function MainDesktop() {
       ))}
 
       {/* Dock */}
-      <AudioPlayer src={currentMusic} />
+      <AudioPlayer
+        track={currentTrack}
+        onNext={() => stepTheme(1)}
+        onPrev={() => stepTheme(-1)}
+      />
       <Dock
         openNewWindow={openNewWindow}
         openWindows={openWindows}

@@ -62,10 +62,11 @@ export default function ProfileDropdown({ currentProfile, onSwitch, onClose }: P
                       : "bg-zinc-800/50 border-zinc-700 hover:border-green-500/30 cursor-pointer"
                   } ${loading ? "opacity-50" : ""}`}
                 >
-                  <span className="text-xl">{p.emoji}</span>
-                  <div className="text-left">
+                  <span className="text-xl shrink-0">{p.emoji}</span>
+                  <div className="text-left flex-1 min-w-0">
                     <p className="text-sm text-zinc-300">{p.name}</p>
-                    <p className="text-[10px] text-zinc-500 uppercase">{key}</p>
+                    <p className="text-[10px] text-green-400/80 italic truncate">{p.tagline}</p>
+                    <p className="text-[11px] text-zinc-500 leading-snug mt-0.5 line-clamp-3">{p.description}</p>
                   </div>
                   {isCurrent && <span className="text-[10px] text-green-400 ml-auto">Current</span>}
                   {loading && !isCurrent && <Loader2 size={14} className="animate-spin text-green-400" />}
