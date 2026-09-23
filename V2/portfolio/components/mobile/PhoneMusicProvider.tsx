@@ -37,9 +37,11 @@ type MusicContextValue = MusicState & MusicActions;
 
 const MusicContext = createContext<MusicContextValue | null>(null);
 
-const profileOrder: ThemeKey[] = ["engineer", "babli", "hacker", "writer", "manglu", "bindi"];
+// Single source of truth — same mapping as desktop (themes[profile].music).
+// Derived from themes so it can never drift from desktop.
+export const profileOrder: ThemeKey[] = Object.keys(themes) as ThemeKey[];
 
-function getTrackForProfile(profile: ThemeKey): Track {
+export function getTrackForProfile(profile: ThemeKey): Track {
   const theme = themes[profile];
   return {
     src: theme.music,
@@ -62,10 +64,11 @@ export function PhoneMusicProvider({ children }: { children: React.ReactNode }) 
     userInteracted: false,
   });
 
+  // Create audio element once
   useEffect(() => {
     audioRef.current = new Audio();
-    audioRef.current.volume = state.volume;
     audioRef.current.loop = false;
+    audioRef.current.preload = "auto";
 
     const audio = audioRef.current;
 
@@ -88,31 +91,53 @@ export function PhoneMusicProvider({ children }: { children: React.ReactNode }) 
       setState((prev) => ({ ...prev, duration: audio.duration }));
     };
 
-    const handlePlay = () => setState((prev) => ({ ...prev, playing: true }));
-    const handlePause = () => setState((prev) => ({ ...prev, playing: false }));
-
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-    audio.addEventListener("play", handlePlay);
-    audio.addEventListener("pause", handlePause);
 
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      audio.removeEventListener("play", handlePlay);
-      audio.removeEventListener("pause", handlePause);
       audio.pause();
     };
   }, []);
 
+  // Keep volume in sync
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = state.volume;
+  }, [state.volume]);
+
+  // Direct profile -> music mapping, exactly like desktop:
+  // whenever currentTrack changes, swap the audio src.
+  // Autoplay the new src only if we were already playing.
+  const currentSrc = state.currentTrack?.src;
+  const isPlaying = state.playing;
+  const hasInteracted = state.userInteracted;
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentSrc) return;
+    const currentAttr = audio.getAttribute("src");
+    if (currentAttr !== currentSrc) {
+      audio.src = currentSrc;
+      audio.load();
+      if (isPlaying && hasInteracted) {
+        audio.play().catch((e) => console.warn("Audio play failed:", e));
+      }
+    }
+  }, [currentSrc, isPlaying, hasInteracted]);
+
   const play = useCallback(async () => {
-    if (!audioRef.current || !state.currentTrack) return;
+    const audio = audioRef.current;
+    if (!audio || !state.currentTrack) return;
     if (!state.userInteracted) return;
+    // Ensure src is correct without restarting if already correct
+    if (audio.getAttribute("src") !== state.currentTrack.src) {
+      audio.src = state.currentTrack.src;
+      audio.load();
+    }
     try {
-      audioRef.current.src = state.currentTrack.src;
-      await audioRef.current.play();
+      await audio.play();
       setState((prev) => ({ ...prev, playing: true }));
     } catch (e) {
       console.warn("Audio play failed:", e);
@@ -126,47 +151,65 @@ export function PhoneMusicProvider({ children }: { children: React.ReactNode }) 
 
   const toggle = useCallback(() => {
     if (state.playing) pause();
-    else play();
+    else void play();
   }, [play, pause, state.playing]);
 
-  const seek = useCallback((progress: number) => {
-    if (!audioRef.current || !state.duration) return;
-    const time = progress * state.duration;
-    audioRef.current.currentTime = time;
-    setState((prev) => ({ ...prev, progress, currentTime: time }));
-  }, [state.duration]);
+  const seek = useCallback(
+    (progress: number) => {
+      if (!audioRef.current || !state.duration) return;
+      const time = progress * state.duration;
+      audioRef.current.currentTime = time;
+      setState((prev) => ({ ...prev, progress, currentTime: time }));
+    },
+    [state.duration]
+  );
 
   const setVolume = useCallback((volume: number) => {
     const clamped = Math.max(0, Math.min(1, volume));
-    if (audioRef.current) audioRef.current.volume = clamped;
     setState((prev) => ({ ...prev, volume: clamped }));
   }, []);
 
   const next = useCallback(() => {
-    if (!state.currentTrack) return;
-    const currentIndex = profileOrder.indexOf(state.currentTrack.profile);
-    const nextIndex = (currentIndex + 1) % profileOrder.length;
-    const nextProfile = profileOrder[nextIndex];
-    const nextTrack = getTrackForProfile(nextProfile);
-    setState((prev) => ({ ...prev, currentTrack: nextTrack, progress: 0, currentTime: 0 }));
-    if (state.playing) play();
-  }, [state.currentTrack, state.playing, play]);
+    setState((prev) => {
+      if (!prev.currentTrack) return prev;
+      const currentIndex = profileOrder.indexOf(prev.currentTrack.profile);
+      const nextProfile = profileOrder[(currentIndex + 1) % profileOrder.length];
+      return {
+        ...prev,
+        currentTrack: getTrackForProfile(nextProfile),
+        progress: 0,
+        currentTime: 0,
+      };
+    });
+  }, []);
 
   const prev = useCallback(() => {
-    if (!state.currentTrack) return;
-    const currentIndex = profileOrder.indexOf(state.currentTrack.profile);
-    const prevIndex = (currentIndex - 1 + profileOrder.length) % profileOrder.length;
-    const prevProfile = profileOrder[prevIndex];
-    const prevTrack = getTrackForProfile(prevProfile);
-    setState((prev) => ({ ...prev, currentTrack: prevTrack, progress: 0, currentTime: 0 }));
-    if (state.playing) play();
-  }, [state.currentTrack, state.playing, play]);
+    setState((prev) => {
+      if (!prev.currentTrack) return prev;
+      const currentIndex = profileOrder.indexOf(prev.currentTrack.profile);
+      const prevProfile =
+        profileOrder[(currentIndex - 1 + profileOrder.length) % profileOrder.length];
+      return {
+        ...prev,
+        currentTrack: getTrackForProfile(prevProfile),
+        progress: 0,
+        currentTime: 0,
+      };
+    });
+  }, []);
 
   const setTrack = useCallback((profile: ThemeKey) => {
-    const track = getTrackForProfile(profile);
-    setState((prev) => ({ ...prev, currentTrack: track, progress: 0, currentTime: 0 }));
-    if (state.playing) play();
-  }, [state.playing, play]);
+    setState((prev) => {
+      // No-op if already on this profile's track — keeps desktop-like 1:1 mapping
+      if (prev.currentTrack?.profile === profile) return prev;
+      return {
+        ...prev,
+        currentTrack: getTrackForProfile(profile),
+        progress: 0,
+        currentTime: 0,
+      };
+    });
+  }, []);
 
   const setUserInteracted = useCallback(() => {
     setState((prev) => ({ ...prev, userInteracted: true }));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useProfile } from "@/hooks/useProfile";
 import PhoneApp from "./PhoneApp";
 import PhoneChat from "./PhoneChat";
@@ -195,10 +195,23 @@ function PhoneScreenInner() {
     }
   };
 
-  const handleProfileSwitch = (newProfile: ThemeKey) => {
-    switchProfile(newProfile);
-    setTrack(newProfile);
-  };
+  // Direct profile -> music mapping, same as desktop (themes[profile].music).
+  // Both profile state and music track update together.
+  const handleProfileSwitch = useCallback(
+    (newProfile: ThemeKey) => {
+      switchProfile(newProfile);
+      setTrack(newProfile);
+    },
+    [switchProfile, setTrack]
+  );
+
+  const handleInitialSelect = useCallback(
+    (selected: ThemeKey) => {
+      handleProfileSwitch(selected);
+      setShowProfileSelect(false);
+    },
+    [handleProfileSwitch]
+  );
 
   const handleUserInteraction = () => {
     if (!userInteracted) setUserInteracted();
@@ -211,7 +224,7 @@ function PhoneScreenInner() {
       onTouchStart={handleUserInteraction}
     >
       {showProfileSelect ? (
-        <PhoneProfileSelect onSelect={() => setShowProfileSelect(false)} />
+        <PhoneProfileSelect onSelect={handleInitialSelect} />
       ) : (
         <>
           {/* Status Bar */}

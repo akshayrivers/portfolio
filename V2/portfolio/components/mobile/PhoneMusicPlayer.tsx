@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePhoneMusic } from "./PhoneMusicProvider";
+import { themes, type ThemeKey } from "@/data/themes";
 
 function formatTime(seconds: number): string {
   if (!seconds || isNaN(seconds)) return "0:00";
@@ -47,6 +48,7 @@ export default function PhoneMusicPlayer({
     currentTime,
     duration,
     volume,
+    currentTrack,
     toggle,
     next: nextTrack,
     prev: prevTrack,
@@ -56,83 +58,37 @@ export default function PhoneMusicPlayer({
   } = usePhoneMusic();
 
   const [expanded, setExpanded] = useState(!compact);
-  const [currentQueueIndex, setCurrentQueueIndex] = useState(0);
 
-  const queue = [
-    {
-      id: "1",
-      title: "Hate Yourself",
-      artist: "TV Girl",
-      artwork: "/assets/thumbnails/spider-man.jpg",
-      duration: 267,
-      url: "/sounds/hateyourself.mp3",
-      profile: "spiderman",
-    },
-    {
-      id: "2",
-      title: "Ellie's Theme",
-      artist: "Gustavo Santaolalla",
-      artwork: "/assets/thumbnails/ellie.jpg",
-      duration: 190,
-      url: "/sounds/ellie.mp3",
-      profile: "ellie",
-    },
-    {
-      id: "3",
-      title: "Sekiro Soundtrack",
-      artist: "Yuka Kitamura",
-      artwork: "/assets/thumbnails/sekiro.jpg",
-      duration: 245,
-      url: "/sounds/explosion.mp3",
-      profile: "sekiro",
-    },
-    {
-      id: "4",
-      title: "Typewriter",
-      artist: "Unknown",
-      artwork: "/assets/thumbnails/musashi.jpg",
-      duration: 180,
-      url: "/sounds/typewriter.mp3",
-      profile: "musashi",
-    },
-    {
-      id: "5",
-      title: "My Old Ways",
-      artist: "Unknown",
-      artwork: "/assets/thumbnails/coming-soon.jpg",
-      duration: 210,
-      url: "/sounds/myoldways.mp3",
-      profile: "manglu",
-    },
-    {
-      id: "6",
-      title: "Red Sky",
-      artist: "Unknown",
-      artwork: "/assets/thumbnails/red-sky.jpg",
-      duration: 230,
-      url: "/sounds/explosion.mp3",
-      profile: "redsky",
-    },
-  ];
+  // Same direct mapping as desktop: profile -> themes[profile].music.
+  // Derived from themes so mobile can never drift from desktop.
+  const queue = useMemo(
+    () =>
+      (Object.keys(themes) as ThemeKey[]).map((profile, i) => ({
+        id: `${i + 1}`,
+        title: themes[profile].musicTitle,
+        artist: themes[profile].musicArtist,
+        artwork: themes[profile].musicArt,
+        duration: 0,
+        url: themes[profile].music,
+        profile,
+      })),
+    []
+  );
 
-  const track = queue[currentQueueIndex];
-  const isPlaying = playing;
+  // Display follows the provider's currentTrack — no independent index
+  // that can go out of sync on profile switch.
+  const currentQueueIndex = Math.max(
+    0,
+    queue.findIndex((q) => q.profile === currentTrack?.profile)
+  );
+  const track = queue[currentQueueIndex] ?? queue[0];
 
   const handleNext = () => {
     nextTrack();
-    setCurrentQueueIndex((prev) => (prev + 1) % queue.length);
   };
 
   const handlePrev = () => {
     prevTrack();
-    setCurrentQueueIndex((prev) => (prev - 1 + queue.length) % queue.length);
-  };
-
-  const formatTime = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const baseStyles =
@@ -150,9 +106,9 @@ export default function PhoneMusicPlayer({
     >
       {!expanded && (
         <div className="flex items-center justify-between h-14 px-4 w-full max-w-md">
-          <button
+          <div
             onClick={() => setExpanded(true)}
-            className="flex items-center gap-3 w-full text-left touch-manipulation"
+            className="flex items-center gap-3 w-full text-left touch-manipulation cursor-pointer"
           >
             <div
               className={`w-10 h-10 rounded-lg overflow-hidden border border-zinc-700 ${playing ? "animate-pulse-subtle" : ""}`}
@@ -172,7 +128,10 @@ export default function PhoneMusicPlayer({
             <div className="flex items-center gap-2">
               <EqualizerBars playing={playing} />
               <button
-                onClick={toggle}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggle();
+                }}
                 className="p-2.5 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-400 transition-colors touch-manipulation"
                 aria-label={playing ? "Pause" : "Play"}
                 style={{ minWidth: "40px", minHeight: "40px" }}
@@ -198,7 +157,7 @@ export default function PhoneMusicPlayer({
                 )}
               </button>
             </div>
-          </button>
+          </div>
         </div>
       )}
 
@@ -390,16 +349,7 @@ export default function PhoneMusicPlayer({
                 <button
                   key={q.id}
                   onClick={() => {
-                    setCurrentQueueIndex(i);
-                    setTrack(
-                      q.profile as
-                        | "engineer"
-                        | "babli"
-                        | "hacker"
-                        | "writer"
-                        | "manglu"
-                        | "bindi",
-                    );
+                    setTrack(q.profile);
                   }}
                   className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors touch-manipulation ${
                     i === currentQueueIndex
@@ -441,13 +391,6 @@ export default function PhoneMusicPlayer({
         </div>
       )}
 
-      {!expanded && (
-        <button
-          onClick={() => setExpanded(true)}
-          className="absolute inset-0 w-full h-full touch-manipulation"
-          aria-label="Expand player"
-        />
-      )}
     </div>
   );
 }
