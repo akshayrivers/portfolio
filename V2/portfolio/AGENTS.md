@@ -89,9 +89,17 @@ profile-aware (`setProfile`, synced from `MainDesktop` + `PhoneScreenInner`); mo
 Babli/Manglu = story-character easter eggs, Bindi = philosophy (later). Raw dump: `content/inbox/dump.md`
 (working material, not shipped). Secrets in chat are never stored — rotate GITHUB_TOKEN after use.
 
+### 4. Hacker profile curation (UNCOMMITTED as of 2026-09-23)
+Night-shift offensive profile: Jr Pentester path completed, labs/CTFs/own-hardware ethics line. Technique-only
+writings (all flags/passwords/answers stripped; 2 known room-answer errors fixed in curation); afhds_decoder flagship
+with verified-vs-ongoing split (synthetic TX IDs and realtime %%% stripped); packet_sniffer with shipped-vs-roadmap
+honesty. New: `data/content/hacker/{about,projects,writings,ideas,memories}` wired via existing selector —
+no code changes needed. DEFERRED: notes/ tools+cheatsheets (needs fresh GITHUB_TOKEN, old one 401s),
+proxy write-up (user-deferred). Memories are proposed moments — user to correct with real ones.
+
 ## Next / planned
 
-- Hacker profile curation (TryHackMe write-ups, packet work, notes/ tools + cheatsheets, proxy write-up?).
+- Cheatsheets pass (fresh token) + proxy decision revisit.
 - Writer profile curation (stories: Feast on Life, Cigarettes, Avarice; Yonro whimsy cross-links).
 - Babli / Manglu (story easter eggs) + Bindi (philosophy) curation.
 - Embed full Medium post texts when finalized (currently link-entries in engineer writings).

@@ -201,9 +201,21 @@ export default function MainDesktop() {
   const currentWallpaper = themes[currentTheme].video;
   const currentMusic = themes[currentTheme].music;
 
+  // Desktop has one identity: theme buttons drive wallpaper + music AND the
+  // active profile (apps, VFS content), exactly like mobile profile switching.
+  const handleThemeSelect = (theme: ThemeKey) => {
+    setCurrentTheme(theme);
+    localStorage.setItem("theme", theme);
+    switchProfile(theme);
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    if (saved && saved in themes) setCurrentTheme(saved as ThemeKey);
+    if (saved && saved in themes) {
+      setCurrentTheme(saved as ThemeKey);
+      switchProfile(saved as ThemeKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -221,7 +233,7 @@ export default function MainDesktop() {
         {Object.keys(themes).map((theme) => (
           <button
             key={theme}
-            onClick={(e) => { e.stopPropagation(); setCurrentTheme(theme as ThemeKey); localStorage.setItem("theme", theme); }}
+            onClick={(e) => { e.stopPropagation(); handleThemeSelect(theme as ThemeKey); }}
             className="text-xs px-2 py-1 bg-white/15 hover:bg-white/25 rounded cursor-pointer"
           >
             {theme}

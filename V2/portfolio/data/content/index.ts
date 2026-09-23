@@ -5,6 +5,11 @@ import engineerProjects from "./engineer/projects";
 import engineerWritings from "./engineer/writings";
 import engineerIdeas from "./engineer/ideas";
 import engineerMemories from "./engineer/memories";
+import hackerAbout from "./hacker/about";
+import hackerProjects from "./hacker/projects";
+import hackerWritings from "./hacker/writings";
+import hackerIdeas from "./hacker/ideas";
+import hackerMemories from "./hacker/memories";
 
 // Legacy global content — used by every profile until it gets its own curation.
 import legacyAbout from "@/data/about";
@@ -23,6 +28,13 @@ const curated: Partial<
     writings: engineerWritings,
     ideas: engineerIdeas,
     memories: engineerMemories,
+  },
+  hacker: {
+    about: hackerAbout,
+    projects: hackerProjects,
+    writings: hackerWritings,
+    ideas: hackerIdeas,
+    memories: hackerMemories,
   },
 };
 

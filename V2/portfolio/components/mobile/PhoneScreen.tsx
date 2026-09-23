@@ -121,17 +121,43 @@ function AboutPage({ profile }: { profile: ProfileKey }) {
   );
 }
 
+function ProjectBody({ file }: { file: { content?: string; src?: string } }) {
+  const { content: fetched, loading } = useFileContent(file.src ?? null);
+  const text = file.content ?? fetched ?? (loading ? "Loading…" : "Empty file.");
+  return (
+    <div className="mt-2 pt-2 border-t border-zinc-700/60">
+      <Md text={text} />
+    </div>
+  );
+}
+
 function ProjectsPage({ profile }: { profile: ProfileKey }) {
   const projectData = getContent(profile, "projects");
+  const [open, setOpen] = useState<number | null>(null);
   return (
     <div className="p-4 overflow-auto h-full">
       <h2 className="text-green-400 text-lg font-bold mb-4">Projects</h2>
       <div className="space-y-2">
-        {projectData.map((p, i) => (
-          <div key={i} className="bg-zinc-800/50 rounded-lg p-3 border border-zinc-700">
-            <span className="text-zinc-300 text-sm">{p.name}</span>
-          </div>
-        ))}
+        {projectData.map((p, i) => {
+          const expanded = open === i;
+          return (
+            <div
+              key={i}
+              onClick={() => setOpen(expanded ? null : i)}
+              className={`bg-zinc-800/50 rounded-lg p-3 border transition cursor-pointer active:scale-[0.99] ${
+                expanded ? "border-green-500/40" : "border-zinc-700"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className={`text-sm ${expanded ? "text-green-300" : "text-zinc-300"}`}>
+                  {p.name}
+                </span>
+                <span className="text-zinc-600 text-xs shrink-0">{expanded ? "▲" : "▼"}</span>
+              </div>
+              {expanded && <ProjectBody file={p} />}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
