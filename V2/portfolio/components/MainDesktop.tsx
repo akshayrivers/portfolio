@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useProfile } from "@/hooks/useProfile";
+import { useVFS } from "@/hooks/useVFS";
 import FloatingWindow from "./FloatingWindow";
 import HudFrame from "./HudFrame";
 import TerminalUI from "./terminal";
@@ -23,6 +24,12 @@ type WindowInstance = {
 export default function MainDesktop() {
   const [isMobile, setIsMobile] = useState(false);
   const { profile, loading: profileLoading, switchProfile } = useProfile();
+  const setVFSProfile = useVFS((s) => s.setProfile);
+
+  // Keep the terminal/explorer filesystem on the active profile's content.
+  useEffect(() => {
+    setVFSProfile(profile);
+  }, [profile, setVFSProfile]);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -165,16 +172,21 @@ export default function MainDesktop() {
         );
       case "batman":
         return (
-          <>
-            Grief doesn't go away. You just learn to live with it.
-            <br />But you're not alone in the dark — reach out:
-            <ul className="list-disc list-inside mt-2">
+          <div className="max-w-md">
+            <p className="text-lg">Even Batman calls Alfred.</p>
+            <p className="mt-2 text-sm text-zinc-300">
+              This portfolio has a jokes folder, a chaos gremlin, and a whole
+              terminal — but some nights the dark feels real. Strength is not
+              suffering quietly; every hero has a line they call. If you need
+              one, these lines are answered by humans, free, in India:
+            </p>
+            <ul className="list-disc list-inside mt-3 space-y-1 text-sm">
               <li><strong>iCall:</strong> 9152987821</li>
               <li><strong>AASRA:</strong> 91-9820466726</li>
               <li><strong>Vandrevala Foundation:</strong> 1860 266 2345</li>
             </ul>
-            <p className="mt-2">Be the hero of your own story. Start by asking for help.</p>
-          </>
+            <p className="mt-3 text-sm">The night is darkest before the dawn. Call someone. Stay for the sequel.</p>
+          </div>
         );
       case "schrodinger":
         return <ExplorerView title="cat in the bag" path="/home/vinod/secret" />;

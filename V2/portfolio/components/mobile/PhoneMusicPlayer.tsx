@@ -57,7 +57,7 @@ export default function PhoneMusicPlayer({
     setTrack,
   } = usePhoneMusic();
 
-  const [expanded, setExpanded] = useState(!compact);
+  const [expanded, setExpanded] = useState(true);
 
   // Same direct mapping as desktop: profile -> themes[profile].music.
   // Derived from themes so mobile can never drift from desktop.

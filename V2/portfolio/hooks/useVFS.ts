@@ -1,12 +1,12 @@
 "use client";
 
 import { create } from 'zustand';
-import aboutFiles from '@/data/about';
-import projectFiles from '@/data/projects';
-import ideaFiles from '@/data/ideas';
-import memoriesFiles from '@/data/memories';
 import contactFiles from '@/data/contact';
 import catFiles from '@/data/cat';
+import { getContent } from '@/data/content';
+import type { ContentFile } from '@/data/content/types';
+import { DEFAULT_PROFILE } from '@/lib/dispatch';
+import type { ProfileKey } from '@/data/profiles';
 
 export type FileType = 'file' | 'dir' | 'exec';
 
@@ -20,77 +20,102 @@ export interface VFSNode {
 
 interface VFSState {
   root: VFSNode;
-  
+  vfsProfile: ProfileKey;
+
   // Actions
+  setProfile: (profile: ProfileKey) => void;
   getAbsolutePath: (path: string, currentPath: string) => string;
   getNodeByPath: (path: string, currentPath: string) => VFSNode | null;
   ls: (path: string | undefined, currentPath: string) => string[] | null;
 }
 
-const initialRoot: VFSNode = {
-  name: '/',
-  type: 'dir',
-  children: {
-    'home': {
-      name: 'home',
+function buildVinodChildren(profile: ProfileKey): Record<string, VFSNode> {
+  const toFiles = (files: ContentFile[]): Record<string, VFSNode> =>
+    Object.fromEntries(
+      files.map((f): [string, VFSNode] => [
+        f.name,
+        { name: f.name, type: 'file', content: f.content, src: f.src },
+      ])
+    );
+  return {
+    'about': {
+      name: 'about',
       type: 'dir',
-      children: {
-        'vinod': {
-          name: 'vinod',
-          type: 'dir',
-          children: {
-            'about': {
-              name: 'about',
-              type: 'dir',
-              children: Object.fromEntries(aboutFiles.map(f => [f.name, { ...f, type: 'file' }]))
-            },
-            'projects': {
-              name: 'projects',
-              type: 'dir',
-              children: Object.fromEntries(projectFiles.map(f => [f.name, { ...f, type: 'file' }]))
-            },
-            'ideas': {
-              name: 'ideas',
-              type: 'dir',
-              children: Object.fromEntries(ideaFiles.map(f => [f.name, { ...f, type: 'file' }]))
-            },
-            'memories': {
-              name: 'memories',
-              type: 'dir',
-              children: Object.fromEntries(memoriesFiles.map(f => [f.name, { ...f, type: 'file' }]))
-            },
-            'contact': {
-              name: 'contact',
-              type: 'dir',
-              children: Object.fromEntries(contactFiles.map(f => [f.name, { ...f, type: f.name.endsWith('.sh') ? 'exec' : 'file' }]))
-            },
-            'secret': {
-              name: 'secret',
-              type: 'dir',
-              children: Object.fromEntries(catFiles.map(f => [f.name, { ...f, type: 'file' }]))
+      children: toFiles(getContent(profile, 'about'))
+    },
+    'projects': {
+      name: 'projects',
+      type: 'dir',
+      children: toFiles(getContent(profile, 'projects'))
+    },
+    'ideas': {
+      name: 'ideas',
+      type: 'dir',
+      children: toFiles(getContent(profile, 'ideas'))
+    },
+    'memories': {
+      name: 'memories',
+      type: 'dir',
+      children: toFiles(getContent(profile, 'memories'))
+    },
+  };
+}
+
+// Contact + secret stay global across profiles; only the five
+// content sections rebuild per profile via getContent().
+function buildRoot(profile: ProfileKey): VFSNode {
+  return {
+    name: '/',
+    type: 'dir',
+    children: {
+      'home': {
+        name: 'home',
+        type: 'dir',
+        children: {
+          'vinod': {
+            name: 'vinod',
+            type: 'dir',
+            children: {
+              ...buildVinodChildren(profile),
+              'contact': {
+                name: 'contact',
+                type: 'dir',
+                children: Object.fromEntries(contactFiles.map(f => [f.name, { ...f, type: f.name.endsWith('.sh') ? 'exec' : 'file' }]))
+              },
+              'secret': {
+                name: 'secret',
+                type: 'dir',
+                children: Object.fromEntries(catFiles.map(f => [f.name, { ...f, type: 'file' }]))
+              }
             }
           }
         }
-      }
-    },
-    'bin': {
-      name: 'bin',
-      type: 'dir',
-      children: {
-        'help': { name: 'help', type: 'exec' },
-        'clear': { name: 'clear', type: 'exec' },
-        'ls': { name: 'ls', type: 'exec' },
-        'cd': { name: 'cd', type: 'exec' },
-        'cat': { name: 'cat', type: 'exec' },
-        'echo': { name: 'echo', type: 'exec' },
-        'pwd': { name: 'pwd', type: 'exec' },
+      },
+      'bin': {
+        name: 'bin',
+        type: 'dir',
+        children: {
+          'help': { name: 'help', type: 'exec' },
+          'clear': { name: 'clear', type: 'exec' },
+          'ls': { name: 'ls', type: 'exec' },
+          'cd': { name: 'cd', type: 'exec' },
+          'cat': { name: 'cat', type: 'exec' },
+          'echo': { name: 'echo', type: 'exec' },
+          'pwd': { name: 'pwd', type: 'exec' },
+        }
       }
     }
-  }
-};
+  };
+}
 
 export const useVFS = create<VFSState>((set, get) => ({
-  root: initialRoot,
+  root: buildRoot(DEFAULT_PROFILE),
+  vfsProfile: DEFAULT_PROFILE,
+
+  setProfile: (profile: ProfileKey) => {
+    if (get().vfsProfile === profile) return;
+    set({ vfsProfile: profile, root: buildRoot(profile) });
+  },
 
   getAbsolutePath: (path: string, currentPath: string) => {
     if (path.startsWith('/')) {

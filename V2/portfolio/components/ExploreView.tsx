@@ -80,6 +80,57 @@ function getDomainFromUrl(url: string): string | null {
   }
 }
 
+function LinkCards({ markdown }: { markdown: string }) {
+  const links = useMemo(() => {
+    const re = /\[([^\]]+)\]\((https?:[^)]+)\)/g;
+    const out: { label: string; url: string }[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(markdown)) !== null)
+      out.push({ label: m[1], url: m[2] });
+    return out;
+  }, [markdown]);
+
+  if (links.length === 0) return null;
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 mb-4">
+      {links.map((l) => {
+        let host = "";
+        try {
+          host = new URL(l.url).hostname;
+        } catch {
+          host = l.url;
+        }
+        return (
+          <a
+            key={l.url}
+            href={l.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 p-3 rounded-lg border border-zinc-700 bg-zinc-900 hover:border-green-500/50 hover:bg-zinc-800/80 transition group"
+          >
+            <img
+              src={`https://www.google.com/s2/favicons?domain=${host}&sz=64`}
+              alt=""
+              className="w-8 h-8 rounded shrink-0"
+              loading="lazy"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-zinc-100 font-medium truncate group-hover:text-green-300">
+                {l.label}
+              </p>
+              <p className="text-xs text-zinc-500 truncate">{host}</p>
+            </div>
+            <span className="text-zinc-600 group-hover:text-green-400 transition text-lg leading-none">
+              ↗
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
 function embedUrl(src: string): string {
   if (src.includes("youtube.com/watch?v=")) {
     return src.replace("watch?v=", "embed/");
@@ -166,8 +217,8 @@ export default function ExplorerView({
           {sidebarOpen ? "◀ Hide" : "▶ Files"}
         </button>
       )}
-      {/* Sidebar */}
-      <div className={`${isMobile ? (sidebarOpen ? "w-full max-h-[40vh] border-b border-gray-700" : "hidden") : "w-1/3 max-h-[90vh] overflow-y-auto bg-black bg-opacity-20 p-3 border-r border-gray-700"}`}>
+      {/* Sidebar — scrolls independently from the viewer */}
+      <div className={`${isMobile ? (sidebarOpen ? "w-full max-h-[40vh] overflow-y-auto border-b border-gray-700 p-3" : "hidden") : "w-1/3 max-h-[90vh] min-h-0 overflow-y-auto bg-black bg-opacity-20 p-3 border-r border-gray-700"}`}>
         {isMobile ? (
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-green-400 font-bold text-sm">{currentViewPath}</h2>
@@ -199,8 +250,8 @@ export default function ExplorerView({
         </ul>
       </div>
 
-      {/* Viewer */}
-      <div className="flex-1 bg-zinc-950 p-4 overflow-auto relative">
+      {/* Viewer — scrolls independently from the file list */}
+      <div className="flex-1 min-h-0 bg-zinc-950 p-4 overflow-auto relative">
         {selectedFile && selectedFile.type !== 'dir' ? (
           <div>
             <div className="text-sm text-gray-400 mb-2 border-b border-gray-700 pb-1 font-mono">
@@ -246,10 +297,17 @@ export default function ExplorerView({
                 </p>
               </div>
             ) : fileType === "md" ? (
-              <div className="prose prose-invert max-w-none text-green-300">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {selectedFile.content ?? content ?? "Loading..."}
-                </ReactMarkdown>
+              <div>
+                {selectedFile.name === "links.md" && (
+                  <LinkCards
+                    markdown={selectedFile.content ?? content ?? ""}
+                  />
+                )}
+                <div className="prose prose-invert max-w-none text-green-300">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {selectedFile.content ?? content ?? "Loading..."}
+                  </ReactMarkdown>
+                </div>
               </div>
             ) : fileType === "txt" ? (
               selectedFile.name.toLowerCase().includes("email") &&

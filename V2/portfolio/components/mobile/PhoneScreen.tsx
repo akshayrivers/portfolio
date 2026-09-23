@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
+import { useVFS } from "@/hooks/useVFS";
 import PhoneApp from "./PhoneApp";
 import PhoneChat from "./PhoneChat";
 import PhoneProfileSelect from "./PhoneProfileSelect";
 import ProfileDropdown from "./ProfileDropdown";
 import { PhoneMusicProvider, usePhoneMusic } from "./PhoneMusicProvider";
 import PhoneMusicPlayer from "./PhoneMusicPlayer";
-import aboutData from "@/data/about";
-import projectData from "@/data/projects";
-import ideaData from "@/data/ideas";
-import memoriesData from "@/data/memories";
+import { getContent } from "@/data/content";
+import useFileContent from "@/hooks/useFileContent";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import contactData from "@/data/contact";
 import { type ThemeKey } from "@/data/themes";
 import { ProfileKey } from "@/data/profiles";
@@ -84,17 +85,35 @@ function SettingsPage() {
   );
 }
 
-function AboutPage() {
+// Renders markdown like the desktop explorer does, sized for the phone UI.
+function Md({ text }: { text?: string }) {
+  if (!text) return null;
+  return (
+    <div className="prose prose-invert prose-sm max-w-none prose-headings:text-green-400 prose-headings:text-sm prose-p:text-zinc-300 prose-p:text-sm prose-p:my-1 prose-li:text-zinc-300 prose-li:text-sm prose-li:my-0 prose-a:text-blue-400 prose-code:text-green-300 prose-code:text-xs prose-pre:bg-zinc-900 prose-ul:my-1 prose-ol:my-1">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+    </div>
+  );
+}
+
+function AboutPage({ profile }: { profile: ProfileKey }) {
+  const aboutData = getContent(profile, "about");
+  const summary = aboutData.find((f) => f.src);
+  const { content: summaryContent } = useFileContent(summary?.src ?? null);
   return (
     <div className="p-4 overflow-auto h-full">
       <h2 className="text-green-400 text-lg font-bold mb-4">About Me</h2>
       <div className="space-y-4">
+        {summary && (
+          <div className="bg-zinc-800/50 rounded-lg p-3 border border-zinc-700">
+            <Md text={summaryContent ?? undefined} />
+          </div>
+        )}
         {aboutData
           .filter((f) => f.content)
           .map((f, i) => (
             <div key={i} className="bg-zinc-800/50 rounded-lg p-3 border border-zinc-700">
               <h3 className="text-zinc-400 text-xs uppercase mb-1">{f.name.replace(/\.\w+$/, "")}</h3>
-              <p className="text-zinc-300 text-sm whitespace-pre-wrap">{f.content}</p>
+              <Md text={f.content} />
             </div>
           ))}
       </div>
@@ -102,7 +121,8 @@ function AboutPage() {
   );
 }
 
-function ProjectsPage() {
+function ProjectsPage({ profile }: { profile: ProfileKey }) {
+  const projectData = getContent(profile, "projects");
   return (
     <div className="p-4 overflow-auto h-full">
       <h2 className="text-green-400 text-lg font-bold mb-4">Projects</h2>
@@ -117,15 +137,18 @@ function ProjectsPage() {
   );
 }
 
-function WritingsPage() {
+function WritingsPage({ profile }: { profile: ProfileKey }) {
+  const writingsData = getContent(profile, "writings");
+  // Fall back to ideas when a profile has no curated writings yet.
+  const data = writingsData.length > 0 ? writingsData : getContent(profile, "ideas");
   return (
     <div className="p-4 overflow-auto h-full">
       <h2 className="text-green-400 text-lg font-bold mb-4">Writings</h2>
       <div className="space-y-2">
-        {ideaData.map((w, i) => (
+        {data.map((w, i) => (
           <div key={i} className="bg-zinc-800/50 rounded-lg p-3 border border-zinc-700">
             <span className="text-zinc-300 text-sm">{w.name}</span>
-            {w.content && <p className="text-zinc-500 text-xs mt-1">{w.content}</p>}
+            <div className="mt-1"><Md text={w.content} /></div>
           </div>
         ))}
       </div>
@@ -133,7 +156,8 @@ function WritingsPage() {
   );
 }
 
-function MemoriesPage() {
+function MemoriesPage({ profile }: { profile: ProfileKey }) {
+  const memoriesData = getContent(profile, "memories");
   return (
     <div className="p-4 overflow-auto h-full">
       <h2 className="text-green-400 text-lg font-bold mb-4">Memories</h2>
@@ -141,7 +165,7 @@ function MemoriesPage() {
         {memoriesData.map((m, i) => (
           <div key={i} className="bg-zinc-800/50 rounded-lg p-3 border border-zinc-700">
             <span className="text-zinc-400 text-xs mb-1">{m.name}</span>
-            <p className="text-zinc-300 text-sm whitespace-pre-wrap">{m.content}</p>
+            <Md text={m.content} />
           </div>
         ))}
       </div>
@@ -168,6 +192,12 @@ function ContactPage() {
 function PhoneScreenInner() {
   const { profile, profileName, switchProfile } = useProfile();
   const { setTrack, setUserInteracted, userInteracted } = usePhoneMusic();
+  const setVFSProfile = useVFS((s) => s.setProfile);
+
+  // Keep the shared terminal/explorer filesystem on the active profile's content.
+  useEffect(() => {
+    setVFSProfile(profile);
+  }, [profile, setVFSProfile]);
   const [activeApp, setActiveApp] = useState<string | null>(null);
   const [showProfileSelect, setShowProfileSelect] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -184,10 +214,10 @@ function PhoneScreenInner() {
   const renderAppContent = (appId: string) => {
     switch (appId) {
       case "chat": return <PhoneChat />;
-      case "about": return <AboutPage />;
-      case "projects": return <ProjectsPage />;
-      case "writings": return <WritingsPage />;
-      case "memories": return <MemoriesPage />;
+      case "about": return <AboutPage profile={profile} />;
+      case "projects": return <ProjectsPage profile={profile} />;
+      case "writings": return <WritingsPage profile={profile} />;
+      case "memories": return <MemoriesPage profile={profile} />;
       case "contact": return <ContactPage />;
       case "camera": return <CameraComingSoon />;
       case "settings": return <SettingsPage />;

@@ -39,6 +39,19 @@ export default function FloatingWindow({
     y.set(defaultPosition.y || 100);
   }, [defaultPosition, x, y]);
 
+  // Fullscreen renders at viewport origin: entering clears any drag offset
+  // (otherwise the framer-motion transform shifts the window off-screen),
+  // restoring puts the window back where it was.
+  useEffect(() => {
+    if (isFullscreen) {
+      x.set(0);
+      y.set(0);
+    } else {
+      x.set(defaultPosition.x || 100);
+      y.set(defaultPosition.y || 100);
+    }
+  }, [isFullscreen, defaultPosition, x, y]);
+
   return (
     <motion.div
       drag={!isFullscreen && !isMinimized}
