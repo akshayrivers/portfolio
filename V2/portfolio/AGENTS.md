@@ -97,9 +97,18 @@ honesty. New: `data/content/hacker/{about,projects,writings,ideas,memories}` wir
 no code changes needed. DEFERRED: notes/ tools+cheatsheets (needs fresh GITHUB_TOKEN, old one 401s),
 proxy write-up (user-deferred). Memories are proposed moments — user to correct with real ones.
 
+### 5. Writer profile curation (UNCOMMITTED as of 2026-09-23)
+Askhay→Rabdi Devi narrator handoff kept authentic (2078-2090 voice); Manglu/Babli co-lead cards with Yonro/Manglu-blog
+cross-links; 5 linktree Google Docs mapped (Feast/SaneKnight/Cigarettes full-or-excerpt in repo, ChildrenOfGod/Drafts
+link-only, full texts need paste). New: `data/content/writer/{about,projects,writings,ideas,memories}` — Feast full
+verbatim + CW header + Afterword + glossary; Knight/Cigarettes excerpts + CW + Doc links; Yonro whimsy cross-links;
+Lust-Inception fragment in terminal-diaries. Babli 826-letter fragment noted as idea, not published.
+
 ## Next / planned
 
 - Cheatsheets pass (fresh token) + proxy decision revisit.
+- Babli / Manglu (story easter eggs) + Bindi (philosophy) curation.
+- Embed full Medium post texts when finalized (currently link-entries in engineer writings).
 - Writer profile curation (stories: Feast on Life, Cigarettes, Avarice; Yonro whimsy cross-links).
 - Babli / Manglu (story easter eggs) + Bindi (philosophy) curation.
 - Embed full Medium post texts when finalized (currently link-entries in engineer writings).

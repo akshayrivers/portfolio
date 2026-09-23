@@ -10,6 +10,11 @@ import hackerProjects from "./hacker/projects";
 import hackerWritings from "./hacker/writings";
 import hackerIdeas from "./hacker/ideas";
 import hackerMemories from "./hacker/memories";
+import writerAbout from "./writer/about";
+import writerProjects from "./writer/projects";
+import writerWritings from "./writer/writings";
+import writerIdeas from "./writer/ideas";
+import writerMemories from "./writer/memories";
 
 // Legacy global content — used by every profile until it gets its own curation.
 import legacyAbout from "@/data/about";
@@ -35,6 +40,13 @@ const curated: Partial<
     writings: hackerWritings,
     ideas: hackerIdeas,
     memories: hackerMemories,
+  },
+  writer: {
+    about: writerAbout,
+    projects: writerProjects,
+    writings: writerWritings,
+    ideas: writerIdeas,
+    memories: writerMemories,
   },
 };
 
