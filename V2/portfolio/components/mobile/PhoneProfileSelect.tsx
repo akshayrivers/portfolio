@@ -29,7 +29,7 @@ export default function PhoneProfileSelect({ onSelect }: Props) {
         <span className="text-xs text-zinc-400">Select Your Profile</span>
         <div className="flex items-center gap-1">
           <Sparkles size={12} color="#39FF14" />
-          <span className="text-xs text-zinc-400">100%</span>
+          <span className="text-xs text-zinc-400">6%</span>
         </div>
       </div>
 

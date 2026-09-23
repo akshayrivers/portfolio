@@ -39,20 +39,21 @@ export default function Home() {
       "Welcome.",
     ];
 
-    const videoUrls = Object.values(themes).map((t) => t.video);
-    let loadedCount = 0;
+    // Only preload the video the user will actually see (saved theme or
+    // default). Other wallpapers load on demand when switching themes —
+    // preloading all six (~90MB) was the main first-load bottleneck.
+    const savedTheme = localStorage.getItem("theme");
+    const firstVideo =
+      savedTheme && savedTheme in themes
+        ? themes[savedTheme as keyof typeof themes].video
+        : Object.values(themes)[0].video;
 
-    videoUrls.forEach((url) => {
-      const video = document.createElement("video");
-      video.src = url;
-      video.preload = "auto";
-      video.onloadeddata = () => {
-        loadedCount++;
-        if (loadedCount === videoUrls.length) {
-          localStorage.setItem("videoLoaded", "true");
-        }
-      };
-    });
+    const video = document.createElement("video");
+    video.src = firstVideo;
+    video.preload = "auto";
+    video.onloadeddata = () => {
+      localStorage.setItem("videoLoaded", "true");
+    };
 
     const interval = setInterval(() => {
       setLoadLines((prev) => [...prev, resourceLines[i]]);

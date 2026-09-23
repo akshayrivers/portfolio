@@ -111,7 +111,7 @@ export default function PhoneMusicPlayer({
             className="flex items-center gap-3 w-full text-left touch-manipulation cursor-pointer"
           >
             <div
-              className={`w-10 h-10 rounded-lg overflow-hidden border border-zinc-700 ${playing ? "animate-pulse-subtle" : ""}`}
+              className={`w-10 h-10 shrink-0 rounded-lg overflow-hidden border border-zinc-700 ${playing ? "animate-pulse-subtle" : ""}`}
             >
               <img
                 src={track.artwork}
@@ -125,16 +125,15 @@ export default function PhoneMusicPlayer({
               </p>
               <p className="text-zinc-500 text-xs truncate">{track.artist}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <EqualizerBars playing={playing} />
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   toggle();
                 }}
-                className="p-2.5 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-400 transition-colors touch-manipulation"
+                className="flex items-center justify-center w-11 h-11 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-400 transition-colors touch-manipulation shrink-0"
                 aria-label={playing ? "Pause" : "Play"}
-                style={{ minWidth: "40px", minHeight: "40px" }}
               >
                 {playing ? (
                   <svg
@@ -142,6 +141,7 @@ export default function PhoneMusicPlayer({
                     height="20"
                     viewBox="0 0 24 24"
                     fill="currentColor"
+                    className="block"
                   >
                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                   </svg>
@@ -151,6 +151,7 @@ export default function PhoneMusicPlayer({
                     height="20"
                     viewBox="0 0 24 24"
                     fill="currentColor"
+                    className="block"
                   >
                     <path d="M8 5v14l11-7z" />
                   </svg>
@@ -237,24 +238,23 @@ export default function PhoneMusicPlayer({
           <div className="flex items-center justify-center gap-3 px-4 pb-3">
             <button
               onClick={handlePrev}
-              className="p-2.5 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors touch-manipulation"
+              className="flex items-center justify-center w-11 h-11 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors touch-manipulation shrink-0"
               aria-label="Previous"
-              style={{ minWidth: "44px", minHeight: "44px" }}
             >
               <svg
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
                 fill="currentColor"
+                className="block"
               >
                 <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
               </svg>
             </button>
             <button
               onClick={toggle}
-              className={`p-3.5 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-400 transition-colors touch-manipulation ${playing ? "animate-pulse-subtle" : ""}`}
+              className={`flex items-center justify-center w-14 h-14 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-400 transition-colors touch-manipulation shrink-0 ${playing ? "animate-pulse-subtle" : ""}`}
               aria-label={playing ? "Pause" : "Play"}
-              style={{ minWidth: "56px", minHeight: "56px" }}
             >
               {playing ? (
                 <svg
@@ -262,6 +262,7 @@ export default function PhoneMusicPlayer({
                   height="28"
                   viewBox="0 0 24 24"
                   fill="currentColor"
+                  className="block"
                 >
                   <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                 </svg>
@@ -271,6 +272,7 @@ export default function PhoneMusicPlayer({
                   height="28"
                   viewBox="0 0 24 24"
                   fill="currentColor"
+                  className="block"
                 >
                   <path d="M8 5v14l11-7z" />
                 </svg>
@@ -278,15 +280,15 @@ export default function PhoneMusicPlayer({
             </button>
             <button
               onClick={handleNext}
-              className="p-2.5 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors touch-manipulation"
+              className="flex items-center justify-center w-11 h-11 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors touch-manipulation shrink-0"
               aria-label="Next"
-              style={{ minWidth: "44px", minHeight: "44px" }}
             >
               <svg
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
                 fill="currentColor"
+                className="block"
               >
                 <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
               </svg>
@@ -298,9 +300,8 @@ export default function PhoneMusicPlayer({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setVolume(volume > 0 ? 0 : 0.3)}
-                className="p-2 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors touch-manipulation"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors touch-manipulation shrink-0"
                 aria-label={volume > 0 ? "Mute" : "Unmute"}
-                style={{ minWidth: "40px", minHeight: "40px" }}
               >
                 {volume > 0 ? (
                   <svg

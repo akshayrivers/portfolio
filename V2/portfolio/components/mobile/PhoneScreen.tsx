@@ -89,7 +89,7 @@ function SettingsPage() {
 function Md({ text }: { text?: string }) {
   if (!text) return null;
   return (
-    <div className="prose prose-invert prose-sm max-w-none prose-headings:text-green-400 prose-headings:text-sm prose-p:text-zinc-300 prose-p:text-sm prose-p:my-1 prose-li:text-zinc-300 prose-li:text-sm prose-li:my-0 prose-a:text-blue-400 prose-code:text-green-300 prose-code:text-xs prose-pre:bg-zinc-900 prose-ul:my-1 prose-ol:my-1">
+    <div className="prose prose-invert prose-sm max-w-none [overflow-wrap:anywhere] prose-headings:text-green-400 prose-headings:text-sm prose-p:text-zinc-300 prose-p:text-sm prose-p:my-1 prose-li:text-zinc-300 prose-li:text-sm prose-li:my-0 prose-a:text-blue-400 prose-code:text-green-300 prose-code:text-xs prose-pre:bg-zinc-900 prose-pre:whitespace-pre-wrap prose-ul:my-1 prose-ol:my-1">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
     </div>
   );
@@ -285,12 +285,12 @@ function PhoneScreenInner() {
         <>
           {/* Status Bar */}
           <div className="flex items-center justify-between px-6 py-2 bg-zinc-900/80 border-b border-zinc-800">
-            <span className="text-xs text-zinc-400">12:45</span>
+            <span className="text-xs text-zinc-400">11:11</span>
             <div className="flex items-center gap-1">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="#39FF14">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
-              <span className="text-xs text-zinc-400">100%</span>
+              <span className="text-xs text-zinc-400">6%</span>
             </div>
           </div>
 
