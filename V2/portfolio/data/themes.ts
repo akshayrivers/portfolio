@@ -7,14 +7,6 @@ export const themes = {
     musicArtist: "softscars",
     musicArt: "/assets/thumbnails/spider-man.jpg",
   },
-  babli: {
-    video: "/assets/wallpapers/ellie.mp4",
-    thumbnail: "/assets/thumbnails/ellie.jpg",
-    music: "/sounds/ellie.mp3",
-    musicTitle: "Ellie's Theme",
-    musicArtist: "Gustavo Santaolalla",
-    musicArt: "/assets/thumbnails/ellie.jpg",
-  },
   hacker: {
     video: "/assets/wallpapers/sekiro.mp4",
     thumbnail: "/assets/thumbnails/sekiro.jpg",
@@ -30,6 +22,14 @@ export const themes = {
     musicTitle: "Typewriter",
     musicArtist: "Unknown",
     musicArt: "/assets/thumbnails/musashi.jpg",
+  },
+  babli: {
+    video: "/assets/wallpapers/ellie.mp4",
+    thumbnail: "/assets/thumbnails/ellie.jpg",
+    music: "/sounds/ellie.mp3",
+    musicTitle: "Ellie's Theme",
+    musicArtist: "Gustavo Santaolalla",
+    musicArt: "/assets/thumbnails/ellie.jpg",
   },
   manglu: {
     video: "/assets/wallpapers/coming-soon.mp4",

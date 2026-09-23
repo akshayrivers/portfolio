@@ -104,11 +104,26 @@ link-only, full texts need paste). New: `data/content/writer/{about,projects,wri
 verbatim + CW header + Afterword + glossary; Knight/Cigarettes excerpts + CW + Doc links; Yonro whimsy cross-links;
 Lust-Inception fragment in terminal-diaries. Babli 826-letter fragment noted as idea, not published.
 
+### 6. Profile order + remaining profiles (UNCOMMITTED as of 2026-09-23)
+Order fixed to engineer → hacker → writer → babli → manglu → bindi in `data/themes.ts`,
+`data/profiles.ts`, `lib/dispatch.ts`, `PhoneScreen.tsx` (everything else derives from
+`Object.keys(themes)`). Babli/Manglu/Bindi curated as easter-egg teasers (verified story material only)
++ coming-soon placeholders elsewhere: `data/content/{babli,manglu,bindi}/*` wired in selector.
+Babli/Manglu/Bindi card descriptions in `data/profiles.ts` rewritten (were stale role descriptions).
+All 6 profiles now curated; no legacy fallbacks remain in use.
+
+### 7. SEO + AI-crawler pass (UNCOMMITTED as of 2026-09-23)
+Recruiter-AI discoverability: `app/layout.tsx` metadata + Person JSON-LD rewritten (SDE backend/AI-agents
+positioning, 2027 cohort, expanded keywords/sameAs/knowsAbout, `seeks` field); `next-sitemap.config.js` allows
+GPTBot/ChatGPT-User/ClaudeBot/anthropic-ai/PerplexityBot/Google-Extended/Bytespider/cohere-ai (note: build
+REGENERATES `public/robots.txt` from this config — never hand-edit robots.txt); new `public/llms.txt`
+candidate summary with verified numbers + evaluation guide. Build passes; robots.txt verified regenerated.
+
 ## Next / planned
 
 - Cheatsheets pass (fresh token) + proxy decision revisit.
-- Babli / Manglu (story easter eggs) + Bindi (philosophy) curation.
 - Embed full Medium post texts when finalized (currently link-entries in engineer writings).
+- B-tree 40ms + Yonro ns figures: republish from CI once CI runs benches.
 - Writer profile curation (stories: Feast on Life, Cigarettes, Avarice; Yonro whimsy cross-links).
 - Babli / Manglu (story easter eggs) + Bindi (philosophy) curation.
 - Embed full Medium post texts when finalized (currently link-entries in engineer writings).

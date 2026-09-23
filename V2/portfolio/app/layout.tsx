@@ -22,32 +22,48 @@ const BASE_URL = "https://vinod-akshat.vercel.app";
 
 export const metadata: Metadata = {
   title: {
-    default: "Vinod Akshat | Full-Stack Developer & Cybersecurity Enthusiast",
+    default: "Vinod Akshat | SDE (Backend, AI Agents) — NIT Srinagar '27",
     template: "%s | Vinod Akshat",
   },
   description:
-    "Portfolio of Vinod Akshat — CS student at NIT Srinagar, specializing in Rust, systems programming, cybersecurity, and full-stack development. Explore projects, writings, and contact info.",
+    "Vinod Akshat — final-year CS student at NIT Srinagar (2027) and backend-heavy SDE: TypeScript/Node.js APIs, PostgreSQL, OAuth 2.0/RBAC auth, Docker/CI, plus AI agents and LLM tooling (Gemini, LangChain), with systems depth in Rust and C. Cybersecurity research intern at IIT Jammu, Zed editor contributor (3 merged PRs), Polaris Fellowship finalist, DEFCON Srinagar lead. Open to SDE and backend roles for 2027.",
   keywords: [
     "Vinod Akshat",
-    "Full-Stack Developer",
+    "Software Engineer",
+    "Backend Developer",
+    "SDE",
+    "TypeScript Developer",
+    "Node.js Developer",
+    "AI Agents",
+    "LLM Tooling",
+    "Gemini API",
+    "LangChain",
+    "PostgreSQL",
+    "Fastify",
+    "OAuth 2.0",
     "Rust Developer",
+    "Systems Programming",
     "Cybersecurity",
     "Penetration Tester",
-    "Next.js Developer",
-    "Software Engineer",
+    "IIT Jammu",
+    "Zed Editor Contributor",
+    "Polaris Fellowship",
+    "DEFCON Srinagar",
     "NIT Srinagar",
-    "Systems Programming",
-    "Developer Portfolio",
+    "Next.js Developer",
+    "Full-Stack Developer",
     "Open Source Contributor",
+    "Hire Software Engineer India",
+    "Backend Engineer Fresher 2027",
   ],
   authors: [{ name: "Vinod Akshat", url: BASE_URL }],
   creator: "Vinod Akshat",
   publisher: "Vinod Akshat",
   metadataBase: new URL(BASE_URL),
   openGraph: {
-    title: "Vinod Akshat | Full-Stack Developer & Cybersecurity Enthusiast",
+    title: "Vinod Akshat | SDE (Backend, AI Agents) — NIT Srinagar '27",
     description:
-      "CS student at NIT Srinagar. Building things with Rust, Next.js, and cybersecurity. Explore projects, writings, and more.",
+      "Final-year CSE at NIT Srinagar. Backend-heavy SDE (TypeScript, Postgres, auth) + AI agents + Rust systems depth. IIT Jammu research intern, Zed contributor, Polaris finalist. Open to SDE/backend roles 2027.",
     url: BASE_URL,
     siteName: "Vinod Akshat",
     type: "website",
@@ -64,9 +80,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vinod Akshat | Full-Stack Developer & Cybersecurity Enthusiast",
+    title: "Vinod Akshat | SDE (Backend, AI Agents) — NIT Srinagar '27",
     description:
-      "CS student at NIT Srinagar. Building things with Rust, Next.js, and cybersecurity.",
+      "Final-year CSE at NIT Srinagar. Backend-heavy SDE + AI agents + Rust systems depth. IIT Jammu intern, Zed contributor, Polaris finalist. Open to SDE/backend roles 2027.",
     creator: "@vinod_akshat",
     images: ["/assets/me.jpeg"],
   },
@@ -99,8 +115,8 @@ const structuredData = {
   name: "Vinod Akshat",
   url: BASE_URL,
   description:
-    "Full-Stack Developer & Cybersecurity Enthusiast at NIT Srinagar. Specializing in Rust, systems programming, and full-stack web development.",
-  jobTitle: "Computer Science Student & Developer",
+    "Backend-heavy Software Engineer (final-year CSE, NIT Srinagar 2027): TypeScript/Node.js APIs, PostgreSQL, auth systems, AI agents and LLM tooling, with systems depth in Rust and C. Cybersecurity research intern at IIT Jammu. Seeking SDE and backend roles for 2027.",
+  jobTitle: "Software Development Engineer (Backend, AI Agents)",
   worksFor: {
     "@type": "Organization",
     name: "NIT Srinagar",
@@ -129,11 +145,18 @@ const structuredData = {
     "https://github.com/akshayrivers",
     "https://linkedin.com/in/vinod-akshat",
     "https://codeforces.com/profile/Akshayforrivers",
+    "https://leetcode.com/akshayrivers",
+    "https://medium.com/@pumkininriver",
+    "https://linktr.ee/vinodakshat",
   ],
   knowsAbout: [
-    "Rust", "C++", "JavaScript", "Next.js", "React",
+    "TypeScript", "Node.js", "Fastify", "Express", "REST APIs",
+    "PostgreSQL", "MongoDB", "OAuth 2.0", "JWT", "RBAC",
+    "AI Agents", "Gemini API", "LangChain", "Agentic Workflows",
+    "Rust", "C", "C++", "Python", "Java", "JavaScript", "SQL", "Bash",
+    "Backend Development", "Authentication Systems", "Docker", "CI/CD",
     "Cybersecurity", "Penetration Testing", "Systems Programming",
-    "Docker", "Linux",
+    "Next.js", "React", "Linux",
   ],
   knowsLanguage: [
     { "@type": "Language", name: "English" },
@@ -141,8 +164,9 @@ const structuredData = {
   ],
   hasOccupation: {
     "@type": "Developer",
-    name: "Full-Stack Developer",
+    name: "Backend Software Engineer",
   },
+  seeks: "SDE and backend engineering roles (2027 graduating cohort)",
 };
 
 export default function RootLayout({

@@ -15,6 +15,21 @@ import writerProjects from "./writer/projects";
 import writerWritings from "./writer/writings";
 import writerIdeas from "./writer/ideas";
 import writerMemories from "./writer/memories";
+import babliAbout from "./babli/about";
+import babliProjects from "./babli/projects";
+import babliWritings from "./babli/writings";
+import babliIdeas from "./babli/ideas";
+import babliMemories from "./babli/memories";
+import mangluAbout from "./manglu/about";
+import mangluProjects from "./manglu/projects";
+import mangluWritings from "./manglu/writings";
+import mangluIdeas from "./manglu/ideas";
+import mangluMemories from "./manglu/memories";
+import bindiAbout from "./bindi/about";
+import bindiProjects from "./bindi/projects";
+import bindiWritings from "./bindi/writings";
+import bindiIdeas from "./bindi/ideas";
+import bindiMemories from "./bindi/memories";
 
 // Legacy global content — used by every profile until it gets its own curation.
 import legacyAbout from "@/data/about";
@@ -47,6 +62,27 @@ const curated: Partial<
     writings: writerWritings,
     ideas: writerIdeas,
     memories: writerMemories,
+  },
+  babli: {
+    about: babliAbout,
+    projects: babliProjects,
+    writings: babliWritings,
+    ideas: babliIdeas,
+    memories: babliMemories,
+  },
+  manglu: {
+    about: mangluAbout,
+    projects: mangluProjects,
+    writings: mangluWritings,
+    ideas: mangluIdeas,
+    memories: mangluMemories,
+  },
+  bindi: {
+    about: bindiAbout,
+    projects: bindiProjects,
+    writings: bindiWritings,
+    ideas: bindiIdeas,
+    memories: bindiMemories,
   },
 };
 

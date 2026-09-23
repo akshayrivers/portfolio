@@ -23,16 +23,6 @@ const allApps: Record<ProfileKey, AppsConfig> = {
     camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
     settings:{ label: "Settings", icon: "settings",   visible: true },
   },
-  babli: {
-    chat:    { label: "Chat",     icon: "term",       visible: true },
-    about:   { label: "Babli",    icon: "soda",       visible: true },
-    projects:{ label: "Projects", icon: "folder2",    visible: true },
-    writings:{ label: "Writings", icon: "writer",     visible: true },
-    memories:{ label: "Memories", icon: "memories",   visible: true },
-    contact: { label: "Contact",  icon: "message",    visible: true },
-    camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
-    settings:{ label: "Settings", icon: "settings",   visible: true },
-  },
   hacker: {
     chat:    { label: "Chat",     icon: "term",       visible: true },
     about:   { label: "Hacker",   icon: "soda",       visible: true },
@@ -47,6 +37,16 @@ const allApps: Record<ProfileKey, AppsConfig> = {
     chat:    { label: "Chat",     icon: "term",       visible: true },
     about:   { label: "Writer",   icon: "soda",       visible: true },
     projects:{ label: "Works",    icon: "folder2",    visible: true },
+    writings:{ label: "Writings", icon: "writer",     visible: true },
+    memories:{ label: "Memories", icon: "memories",   visible: true },
+    contact: { label: "Contact",  icon: "message",    visible: true },
+    camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
+    settings:{ label: "Settings", icon: "settings",   visible: true },
+  },
+  babli: {
+    chat:    { label: "Chat",     icon: "term",       visible: true },
+    about:   { label: "Babli",    icon: "soda",       visible: true },
+    projects:{ label: "Projects", icon: "folder2",    visible: true },
     writings:{ label: "Writings", icon: "writer",     visible: true },
     memories:{ label: "Memories", icon: "memories",   visible: true },
     contact: { label: "Contact",  icon: "message",    visible: true },
@@ -82,9 +82,9 @@ export function getAppsConfig(profile: ProfileKey): AppsConfig {
 export function getProfileNames(): Record<ProfileKey, string> {
   return {
     engineer: "Engineer",
-    babli: "Babli",
     hacker: "Hacker",
     writer: "Writer",
+    babli: "Babli",
     manglu: "Manglu",
     bindi: "Bindi",
   };

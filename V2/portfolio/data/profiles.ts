@@ -9,12 +9,6 @@ export const profiles: Record<ProfileKey, { name: string; emoji: string; descrip
     description: "Penetration tester, Rust developer, and terminal enthusiast. Building tools that break things so they can be fixed.",
     tagline: "Building the web, one exploit at a time",
   },
-  babli: {
-    name: "Babli",
-    emoji: "🦎",
-    description: "Full-stack developer with a passion for clean code and minimal aesthetics. Creating experiences that feel right.",
-    tagline: "Clean code, clean design",
-  },
   hacker: {
     name: "Hacker",
     emoji: "⚔️",
@@ -27,16 +21,22 @@ export const profiles: Record<ProfileKey, { name: string; emoji: string; descrip
     description: "Writer, thinker, and philosopher. Crafting narratives that blur the line between reality and code.",
     tagline: "Where code meets contemplation",
   },
+  babli: {
+    name: "Babli",
+    emoji: "🦎",
+    description: "Story co-lead and professional thought-hearer. Owed a rematch tomorrow. (A story-character easter egg.)",
+    tagline: "I can hear your thoughts, you know",
+  },
   manglu: {
     name: "Manglu",
     emoji: "🌿",
-    description: "Open source contributor and community builder. Connecting people through technology and shared purpose.",
-    tagline: "Building bridges, not walls",
+    description: "Swordless knight with a blanked-out name, on a dream-rescue mission. Runs really fast. (A story-character easter egg.)",
+    tagline: "A tactical retreat is still correct",
   },
   bindi: {
     name: "Bindi",
     emoji: "🌅",
-    description: "Creative developer and visual artist. Merging aesthetics with functionality to create something unforgettable.",
-    tagline: "Art meets engineering",
+    description: "Philosophy fragments: anchors, oblivion, and the line between right and justifiable. (Under construction.)",
+    tagline: "True death is oblivion",
   },
 };

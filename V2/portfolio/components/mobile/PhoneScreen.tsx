@@ -230,9 +230,9 @@ function PhoneScreenInner() {
 
   const profileNames: Record<ProfileKey, string> = {
     engineer: "Engineer",
-    babli: "Babli",
     hacker: "Hacker",
     writer: "Writer",
+    babli: "Babli",
     manglu: "Manglu",
     bindi: "Bindi",
   };
