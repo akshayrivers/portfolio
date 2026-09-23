@@ -17,7 +17,7 @@ export default function PhoneProfileSelect({ onSelect }: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAutoSelected(true);
-      onSelect("spiderman");
+      onSelect("engineer");
     }, 3000);
     return () => clearTimeout(timer);
   }, [onSelect]);

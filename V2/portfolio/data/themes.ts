@@ -1,5 +1,5 @@
 export const themes = {
-  spiderman: {
+  engineer: {
     video: "/assets/wallpapers/spider-man.mp4",
     thumbnail: "/assets/thumbnails/spider-man.jpg",
     music: "/sounds/hateyourself.mp3",
@@ -7,7 +7,7 @@ export const themes = {
     musicArtist: "softscars",
     musicArt: "/assets/thumbnails/spider-man.jpg",
   },
-  ellie: {
+  babli: {
     video: "/assets/wallpapers/ellie.mp4",
     thumbnail: "/assets/thumbnails/ellie.jpg",
     music: "/sounds/ellie.mp3",
@@ -15,7 +15,7 @@ export const themes = {
     musicArtist: "Gustavo Santaolalla",
     musicArt: "/assets/thumbnails/ellie.jpg",
   },
-  sekiro: {
+  hacker: {
     video: "/assets/wallpapers/sekiro.mp4",
     thumbnail: "/assets/thumbnails/sekiro.jpg",
     music: "/sounds/explosion.mp3",
@@ -23,7 +23,7 @@ export const themes = {
     musicArtist: "Yuka Kitamura",
     musicArt: "/assets/thumbnails/sekiro.jpg",
   },
-  musashi: {
+  writer: {
     video: "/assets/wallpapers/musashi.mp4",
     thumbnail: "/assets/thumbnails/musashi.jpg",
     music: "/sounds/typewriter.mp3",
@@ -39,7 +39,7 @@ export const themes = {
     musicArtist: "Unknown",
     musicArt: "/assets/thumbnails/coming-soon.jpg",
   },
-  redsky: {
+  bindi: {
     video: "/assets/wallpapers/red-sky.mp4",
     thumbnail: "/assets/thumbnails/red-sky.jpg",
     music: "/sounds/explosion.mp3",

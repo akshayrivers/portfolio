@@ -185,7 +185,7 @@ export default function MainDesktop() {
     }
   };
 
-  const [currentTheme, setCurrentTheme] = useState<ThemeKey>("spiderman");
+  const [currentTheme, setCurrentTheme] = useState<ThemeKey>("engineer");
   const currentWallpaper = themes[currentTheme].video;
   const currentMusic = themes[currentTheme].music;
 

@@ -173,12 +173,12 @@ function PhoneScreenInner() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const profileNames: Record<ProfileKey, string> = {
-    spiderman: "Spider-Man",
-    ellie: "Ellie",
-    sekiro: "Sekiro",
-    musashi: "Musashi",
+    engineer: "Engineer",
+    babli: "Babli",
+    hacker: "Hacker",
+    writer: "Writer",
     manglu: "Manglu",
-    redsky: "Red Sky",
+    bindi: "Bindi",
   };
 
   const renderAppContent = (appId: string) => {

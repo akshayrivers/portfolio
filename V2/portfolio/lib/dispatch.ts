@@ -13,9 +13,9 @@ export type AppConfig = {
 export type AppsConfig = Record<string, AppConfig>;
 
 const allApps: Record<ProfileKey, AppsConfig> = {
-  spiderman: {
+  engineer: {
     chat:    { label: "Chat",     icon: "term",       visible: true },
-    about:   { label: "Spider-Profile", icon: "soda",  visible: true },
+    about:   { label: "Engineer", icon: "soda",       visible: true },
     projects:{ label: "Exploits", icon: "folder2",    visible: true },
     writings:{ label: "Terminal Diaries", icon: "writer", visible: true },
     memories:{ label: "Hackathons", icon: "memories", visible: true },
@@ -23,9 +23,9 @@ const allApps: Record<ProfileKey, AppsConfig> = {
     camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
     settings:{ label: "Settings", icon: "settings",   visible: true },
   },
-  ellie: {
+  babli: {
     chat:    { label: "Chat",     icon: "term",       visible: true },
-    about:   { label: "Ellie",    icon: "soda",       visible: true },
+    about:   { label: "Babli",    icon: "soda",       visible: true },
     projects:{ label: "Projects", icon: "folder2",    visible: true },
     writings:{ label: "Writings", icon: "writer",     visible: true },
     memories:{ label: "Memories", icon: "memories",   visible: true },
@@ -33,9 +33,9 @@ const allApps: Record<ProfileKey, AppsConfig> = {
     camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
     settings:{ label: "Settings", icon: "settings",   visible: true },
   },
-  sekiro: {
+  hacker: {
     chat:    { label: "Chat",     icon: "term",       visible: true },
-    about:   { label: "Sekiro",   icon: "soda",       visible: true },
+    about:   { label: "Hacker",   icon: "soda",       visible: true },
     projects:{ label: "Exploits", icon: "folder2",    visible: true },
     writings:{ label: "Writings", icon: "writer",     visible: true },
     memories:{ label: "Memories", icon: "memories",   visible: true },
@@ -43,9 +43,9 @@ const allApps: Record<ProfileKey, AppsConfig> = {
     camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
     settings:{ label: "Settings", icon: "settings",   visible: true },
   },
-  musashi: {
+  writer: {
     chat:    { label: "Chat",     icon: "term",       visible: true },
-    about:   { label: "Musashi",  icon: "soda",       visible: true },
+    about:   { label: "Writer",   icon: "soda",       visible: true },
     projects:{ label: "Works",    icon: "folder2",    visible: true },
     writings:{ label: "Writings", icon: "writer",     visible: true },
     memories:{ label: "Memories", icon: "memories",   visible: true },
@@ -63,9 +63,9 @@ const allApps: Record<ProfileKey, AppsConfig> = {
     camera:  { label: "Camera",   icon: "camera",     visible: true, comingSoon: true },
     settings:{ label: "Settings", icon: "settings",   visible: true },
   },
-  redsky: {
+  bindi: {
     chat:    { label: "Chat",     icon: "term",       visible: true },
-    about:   { label: "Red Sky",  icon: "soda",       visible: true },
+    about:   { label: "Bindi",    icon: "soda",       visible: true },
     projects:{ label: "Projects", icon: "folder2",    visible: true },
     writings:{ label: "Writings", icon: "writer",     visible: true },
     memories:{ label: "Memories", icon: "memories",   visible: true },
@@ -81,14 +81,14 @@ export function getAppsConfig(profile: ProfileKey): AppsConfig {
 
 export function getProfileNames(): Record<ProfileKey, string> {
   return {
-    spiderman: "Spider-Man",
-    ellie: "Ellie",
-    sekiro: "Sekiro",
-    musashi: "Musashi",
+    engineer: "Engineer",
+    babli: "Babli",
+    hacker: "Hacker",
+    writer: "Writer",
     manglu: "Manglu",
-    redsky: "Red Sky",
+    bindi: "Bindi",
   };
 }
 
 export const ALL_PROFILES: ProfileKey[] = Object.keys(themes) as ProfileKey[];
-export const DEFAULT_PROFILE: ProfileKey = "spiderman";
+export const DEFAULT_PROFILE: ProfileKey = "engineer";

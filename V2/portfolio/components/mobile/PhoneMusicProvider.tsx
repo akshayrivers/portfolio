@@ -37,7 +37,7 @@ type MusicContextValue = MusicState & MusicActions;
 
 const MusicContext = createContext<MusicContextValue | null>(null);
 
-const profileOrder: ThemeKey[] = ["spiderman", "ellie", "sekiro", "musashi", "manglu", "redsky"];
+const profileOrder: ThemeKey[] = ["engineer", "babli", "hacker", "writer", "manglu", "bindi"];
 
 function getTrackForProfile(profile: ThemeKey): Track {
   const theme = themes[profile];
@@ -53,7 +53,7 @@ function getTrackForProfile(profile: ThemeKey): Track {
 export function PhoneMusicProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [state, setState] = useState<MusicState>({
-    currentTrack: getTrackForProfile("spiderman"),
+    currentTrack: getTrackForProfile("engineer"),
     playing: false,
     progress: 0,
     duration: 0,
